@@ -6,68 +6,22 @@ import { useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 
 interface Opportunity {
-  id: number;
+  id: string;
   title: string;
-  company: string;
-  type: "Internship" | "Job" | "Event";
+  description: string;
+  category: string;
   tags: string[];
-  image: string;
-  timeAgo: string;
-  applicants?: number;
+  media_urls: string[];
   location: string;
-  isEventCard?: boolean;
-  date?: string;
-  going?: number;
-  imageSmall?: boolean;
-  organization?: string;
+  deadline: string;
+  created_at: string;
+  user_id: string;
 }
-
-const OPPORTUNITIES: Opportunity[] = [
-  {
-    id: 1,
-    title: "UI/UX Designer for Student Startup",
-    company: "TechNova",
-    type: "Internship",
-    tags: ["#Design", "#Remote", "#Paid"],
-    image:
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuBDrl8vSVia_48qHfvVVvhX8F7TGgWCLt58orNXOdBr06Ofcyrh1oivf9C5rp3qph73xHQQVM2wxLQ--UAxOPJ_oS56UMR2agy8SRpgUoxx66DXBm_QoRsWNiwIcJg-6tOyjOJc-KgTVAJhepAv-KomFgcl3u-Tb1dm16de1y6dqoTXDBEWIdXpEVV-UcOJHa9uE_e-PqsCxMoAm-fnZ55ENDKr5VT_elFQt2sFV86yutStOudZynRme2KEpxlg6gDpbCIG_SyBX4wM",
-    timeAgo: "2h ago",
-    applicants: 24,
-    location: "Online",
-  },
-  {
-    id: 2,
-    title: "Annual Campus Hackathon 2024",
-    company: "",
-    type: "Event",
-    tags: [],
-    image:
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuCZI9zTe_nG7qMvnV0aqI8A0MrNFRsrJOw7gdwQRnjmvO0css6y858KFFFgud1kv3r9F-maeIisRZ4crLdfsdVWOzLKiT0zpBLvnv7FcKUWuy9ilEpzg1-ic6WvYpD6h4Ewpfsv4e0hBCPWcFvf2vljOUt5TAj7q5Q_MrU93-C8O8pO4cEsxXi1FE3Agd_UOy3vHixPOXoDWwcXWVgWEN-_UOa_JY4fAQpCaaTzo_PQ5_J-sauAbxK77rNZHqBtITtSBGNhap9NIAhM",
-    timeAgo: "5h ago",
-    location: "Student Center, Main Hall",
-    isEventCard: true,
-    date: "OCT 12",
-    going: 150,
-    organization: "Computer Science Society",
-  },
-  {
-    id: 3,
-    title: "Weekend Study Group: Linear Algebra",
-    company: "",
-    type: "Event",
-    tags: ["Social"],
-    image:
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuB4oo-2hHxPzWD82jUptOJHNXlgwCB9wFh3A4PyCMjUzp_tiBi0YhdLiSiMgFAUDaCzn59KSn6byE_IGaE4tp3cg3kAMDEb2sy5rfvLZVe9_54MSHG4_9pcYZM44S6IZwaxWwP50IjVizzrsb_XuAnVgmyR8AwS4cJNp6KIBrwH2qboSRy4VkOutYfoNgwLNX8cs60U1cOhv3wrmRNoxXm6K5Jm3M5ZfYf--hqmIABwZ477rryLa4-s1lLugrGKAXfCk7liZDkDm_b6",
-    timeAgo: "1d ago",
-    location: "Library Room 3B",
-    imageSmall: true,
-    organization: "Math Club",
-  },
-];
 
 export default function Dashboard() {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [opportunities, setOpportunities] = useState<Opportunity[]>([]);
   const [selectedFilter, setSelectedFilter] = useState("All");
   const supabase = createClient();
 
@@ -77,6 +31,22 @@ export default function Dashboard() {
         data: { user },
       } = await supabase.auth.getUser();
       setUser(user);
+
+      // Fetch opportunities from database
+      if (user) {
+        const { data, error } = await supabase
+          .from("opportunities")
+          .select("*")
+          .eq("status", "active")
+          .order("created_at", { ascending: false });
+
+        if (!error && data) {
+          setOpportunities(data as Opportunity[]);
+        } else {
+          console.error("Error fetching opportunities:", error);
+        }
+      }
+
       setLoading(false);
     };
 
@@ -188,181 +158,60 @@ export default function Dashboard() {
 
         {/* Cards Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {OPPORTUNITIES.map((opp) => (
-            <Link key={opp.id} href={`/opportunities/${opp.id}`}>
-              <article className="flex flex-col rounded-2xl bg-surface-light dark:bg-surface-dark shadow-[0_2px_8px_rgba(0,0,0,0.08)] overflow-hidden hover:shadow-lg transition-shadow cursor-pointer">
-                {opp.imageSmall ? (
-                  // Small image layout (study group)
-                  <div className="flex p-4 gap-4">
+          {loading ? (
+            <div className="col-span-full text-center py-8 text-gray-400">
+              Loading opportunities...
+            </div>
+          ) : opportunities.length === 0 ? (
+            <div className="col-span-full text-center py-8 text-gray-400">
+              No opportunities found. Check back soon!
+            </div>
+          ) : (
+            opportunities.map((opp) => (
+              <Link key={opp.id} href={`/opportunities/${opp.id}`}>
+                <article className="flex flex-col rounded-2xl bg-surface-light dark:bg-surface-dark shadow-[0_2px_8px_rgba(0,0,0,0.08)] overflow-hidden hover:shadow-lg transition-shadow cursor-pointer">
+                  {opp.media_urls && opp.media_urls.length > 0 ? (
                     <div
-                      className="h-24 w-24 shrink-0 rounded-xl bg-cover bg-center"
-                      style={{ backgroundImage: `url('${opp.image}')` }}
+                      className="h-40 w-full bg-cover bg-center"
+                      style={{
+                        backgroundImage: `url('${opp.media_urls[0]}')`,
+                      }}
                     ></div>
-                    <div className="flex flex-col flex-1 justify-between">
-                      <div>
-                        <div className="flex justify-between items-start">
-                          <h3 className="text-slate-900 dark:text-white text-base font-bold leading-tight line-clamp-2">
-                            {opp.title}
-                          </h3>
-                        </div>
-                        <p className="text-text-secondary-light dark:text-text-secondary-dark text-xs mt-1">
-                          {opp.organization} • {opp.location}
-                        </p>
-                      </div>
-                      <div className="flex items-center justify-between mt-2">
-                        <span className="text-xs font-semibold bg-blue-500/10 text-blue-500 px-2 py-0.5 rounded">
-                          {opp.tags[0]?.replace("#", "")}
-                        </span>
-                        <button className="text-primary text-sm font-bold hover:underline">
-                          View Details
-                        </button>
-                      </div>
+                  ) : (
+                    <div className="h-40 w-full bg-linear-to-br from-primary/20 to-primary/5"></div>
+                  )}
+                  <div className="p-4 flex flex-col gap-3">
+                    <div>
+                      <h3 className="text-slate-900 dark:text-white text-lg font-bold leading-tight line-clamp-2">
+                        {opp.title}
+                      </h3>
+                      <p className="text-text-secondary-light dark:text-text-secondary-dark font-medium text-sm mt-1">
+                        {opp.location}
+                      </p>
+                      <p className="text-gray-600 dark:text-gray-400 text-sm mt-2 line-clamp-2">
+                        {opp.description}
+                      </p>
                     </div>
-                  </div>
-                ) : opp.isEventCard ? (
-                  // Event card layout
-                  <>
-                    <div
-                      className="h-40 w-full bg-cover bg-center relative"
-                      style={{ backgroundImage: `url('${opp.image}')` }}
-                    >
-                      <div className="absolute top-3 right-3 bg-primary text-white px-2 py-1 rounded text-xs font-bold uppercase tracking-wider">
-                        Event
-                      </div>
-                    </div>
-                    <div className="p-4 flex flex-col gap-3">
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <h3 className="text-slate-900 dark:text-white text-lg font-bold leading-tight">
-                            {opp.title}
-                          </h3>
-                          <p className="text-text-secondary-light dark:text-text-secondary-dark font-medium text-sm mt-1">
-                            {opp.organization}
-                          </p>
-                        </div>
-                        <div className="flex flex-col items-center justify-center bg-gray-100 dark:bg-white/10 rounded-lg p-1 min-w-[50px]">
-                          <span className="text-xs font-bold text-slate-500 dark:text-gray-300 uppercase">
-                            {opp.date?.split(" ")[0]}
-                          </span>
-                          <span className="text-lg font-bold text-slate-900 dark:text-white leading-none">
-                            {opp.date?.split(" ")[1]}
-                          </span>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2 text-sm text-slate-700 dark:text-gray-300">
-                        <span className="material-symbols-outlined text-[18px] text-primary">
-                          location_on
-                        </span>
-                        <span>{opp.location}</span>
-                      </div>
-                      <div className="flex items-center gap-4 text-xs text-text-secondary-light dark:text-text-secondary-dark font-medium border-t border-gray-100 dark:border-white/5 pt-3 mt-1">
-                        <span className="flex items-center gap-1">
-                          <span className="material-symbols-outlined text-[16px]">
-                            schedule
-                          </span>
-                          {opp.timeAgo}
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <span className="material-symbols-outlined text-[16px]">
-                            bolt
-                          </span>
-                          {opp.going}+ Going
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-3 mt-1">
-                        <button className="flex-1 bg-slate-900 dark:bg-white text-white dark:text-background-dark font-bold py-2.5 px-4 rounded-lg text-sm hover:opacity-90 transition-opacity">
-                          Register
-                        </button>
-                        <button className="p-2.5 rounded-lg border border-gray-200 dark:border-white/10 text-slate-500 dark:text-white hover:bg-gray-50 dark:hover:bg-white/5">
-                          <span className="material-symbols-outlined text-[20px]">
-                            bookmark
-                          </span>
-                        </button>
-                      </div>
-                    </div>
-                  </>
-                ) : (
-                  // Job card layout
-                  <>
-                    <div
-                      className="h-40 w-full bg-cover bg-center relative"
-                      style={{ backgroundImage: `url('${opp.image}')` }}
-                    >
-                      <div className="absolute top-3 right-3 bg-black/60 backdrop-blur-sm px-2 py-1 rounded text-xs font-bold text-white uppercase tracking-wider">
-                        {opp.type}
-                      </div>
-                    </div>
-                    <div className="p-4 flex flex-col gap-3">
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <h3 className="text-slate-900 dark:text-white text-lg font-bold leading-tight">
-                            {opp.title}
-                          </h3>
-                          <p className="text-primary font-medium text-sm mt-1">
-                            {opp.company}
-                          </p>
-                        </div>
-                        <div className="h-10 w-10 rounded-full bg-gray-100 dark:bg-white/10 flex items-center justify-center overflow-hidden">
-                          <span className="material-symbols-outlined text-gray-400">
-                            business
-                          </span>
-                        </div>
-                      </div>
-                      <div className="flex flex-wrap gap-2 my-1">
-                        {opp.tags.map((tag) => (
+                    <div className="flex items-center justify-between mt-2">
+                      <div className="flex flex-wrap gap-1">
+                        {opp.tags?.slice(0, 2).map((tag) => (
                           <span
                             key={tag}
-                            className={`px-2 py-1 rounded text-xs font-semibold ${
-                              tag.includes("Design")
-                                ? "bg-primary/10 text-primary"
-                                : "bg-slate-100 dark:bg-white/10 text-slate-600 dark:text-slate-300"
-                            }`}
+                            className="text-xs font-semibold bg-blue-500/10 text-blue-500 px-2 py-0.5 rounded"
                           >
                             {tag}
                           </span>
                         ))}
                       </div>
-                      <div className="flex items-center gap-4 text-xs text-text-secondary-light dark:text-text-secondary-dark font-medium border-t border-gray-100 dark:border-white/5 pt-3 mt-1">
-                        <span className="flex items-center gap-1">
-                          <span className="material-symbols-outlined text-[16px]">
-                            schedule
-                          </span>
-                          {opp.timeAgo}
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <span className="material-symbols-outlined text-[16px]">
-                            group
-                          </span>
-                          {opp.applicants} Applicants
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <span className="material-symbols-outlined text-[16px]">
-                            public
-                          </span>
-                          {opp.location}
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-3 mt-1">
-                        <button className="flex-1 bg-primary text-white font-bold py-2.5 px-4 rounded-lg text-sm hover:bg-primary/90 transition-colors">
-                          Apply Now
-                        </button>
-                        <button className="p-2.5 rounded-lg border border-gray-200 dark:border-white/10 text-slate-500 dark:text-white hover:bg-gray-50 dark:hover:bg-white/5">
-                          <span className="material-symbols-outlined text-[20px]">
-                            bookmark
-                          </span>
-                        </button>
-                        <button className="p-2.5 rounded-lg border border-gray-200 dark:border-white/10 text-slate-500 dark:text-white hover:bg-gray-50 dark:hover:bg-white/5">
-                          <span className="material-symbols-outlined text-[20px]">
-                            share
-                          </span>
-                        </button>
-                      </div>
+                      <button className="text-primary text-sm font-bold hover:underline">
+                        View Details
+                      </button>
                     </div>
-                  </>
-                )}
-              </article>
-            </Link>
-          ))}
+                  </div>
+                </article>
+              </Link>
+            ))
+          )}
         </div>
       </main>
 
@@ -377,7 +226,10 @@ export default function Dashboard() {
       <nav className="fixed bottom-0 w-full bg-surface-light dark:bg-surface-dark border-t border-gray-200 dark:border-white/5 pb-6 pt-3 px-6 z-50 lg:hidden">
         <ul className="flex justify-between items-center max-w-7xl mx-auto">
           <li>
-            <a className="flex flex-col items-center gap-1 group" href="#">
+            <a
+              className="flex flex-col items-center gap-1 group"
+              href="/dashboard"
+            >
               <span className="material-symbols-outlined text-primary text-[28px] group-hover:scale-110 transition-transform">
                 home
               </span>
@@ -385,7 +237,7 @@ export default function Dashboard() {
             </a>
           </li>
           <li>
-            <a className="flex flex-col items-center gap-1 group" href="#">
+            <a className="flex flex-col items-center gap-1 group" href="/guest">
               <span className="material-symbols-outlined text-gray-400 text-[28px] group-hover:text-primary transition-colors">
                 explore
               </span>
@@ -413,7 +265,7 @@ export default function Dashboard() {
           <li>
             <a
               className="flex flex-col items-center gap-1 group"
-              href="/dashboard"
+              href="/profile/current"
             >
               <span className="material-symbols-outlined text-gray-400 text-[28px] group-hover:text-primary transition-colors">
                 person
@@ -481,10 +333,10 @@ export default function Dashboard() {
         <div className="border-t border-gray-200 dark:border-white/10 pt-4">
           <div className="text-center">
             <p className="text-slate-900 dark:text-white font-semibold text-sm">
-              {firstName}
+              {user?.email?.split("@")[0]}
             </p>
             <p className="text-text-secondary-light dark:text-text-secondary-dark text-xs">
-              {user.email}
+              {user?.email}
             </p>
           </div>
         </div>

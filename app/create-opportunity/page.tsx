@@ -381,7 +381,7 @@ export default function CreateOpportunity() {
             <div className="flex gap-3 overflow-x-auto no-scrollbar pb-2">
               {/* Add button */}
               <button
-                className="flex-shrink-0 w-24 h-24 rounded-xl border-2 border-dashed border-slate-300 dark:border-slate-600 bg-surface-light dark:bg-surface-dark flex flex-col items-center justify-center gap-1 hover:border-primary hover:bg-primary/5 transition-all group"
+                className="shrink-0 w-24 h-24 rounded-xl border-2 border-dashed border-slate-300 dark:border-slate-600 bg-surface-light dark:bg-surface-dark flex flex-col items-center justify-center gap-1 hover:border-primary hover:bg-primary/5 transition-all group"
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
               >
@@ -405,7 +405,7 @@ export default function CreateOpportunity() {
               {mediaFiles.map((media) => (
                 <div
                   key={media.id}
-                  className="flex-shrink-0 w-24 h-24 rounded-xl relative group overflow-hidden bg-surface-dark"
+                  className="shrink-0 w-24 h-24 rounded-xl relative group overflow-hidden bg-surface-dark"
                 >
                   {media.type === "image" ? (
                     <img
@@ -414,7 +414,7 @@ export default function CreateOpportunity() {
                       className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"
                     />
                   ) : (
-                    <div className="w-full h-full bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center text-white text-xs font-bold p-2 text-center">
+                    <div className="w-full h-full bg-linear-to-br from-blue-600 to-indigo-600 flex items-center justify-center text-white text-xs font-bold p-2 text-center">
                       {media.file.name.split(".").pop()?.toUpperCase()}
                     </div>
                   )}

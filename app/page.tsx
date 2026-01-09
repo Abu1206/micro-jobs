@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { useState } from 'react';
+import Link from "next/link";
+import { useState } from "react";
 
 export default function Home() {
   const [hoveredButton, setHoveredButton] = useState<string | null>(null);
@@ -16,13 +16,15 @@ export default function Home() {
             backgroundImage: `url('https://lh3.googleusercontent.com/aida-public/AB6AXuBD3AjQI0Lg8lY9Imjibt-A4ScoA3AmxuUK5EEqYXGlOJJYLogG1RG85_08aQXMJLOnbfy3Q4AUqHapnDr__URM7KkQ2mrAlTcZD3nZ3zMa47FJL_yu-Rak62lzED1iw20iEnFpIJO7VdNgM6R993SSB__6tUu02d3mUKdQIHFZYz1p8BgIeVTDGR33Sh5fCwHjBFZRgdcqsBWOzFIb4Xz6FOd0A3LM20--s_HlXDUEDY1a1EgiruHrllAv-8ranaLKbwC5NmRxImyw')`,
           }}
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-background-dark/30 via-background-dark/90 to-background-dark"></div>
+        <div className="absolute inset-0 bg-linear-to-b from-background-dark/30 via-background-dark/90 to-background-dark"></div>
       </div>
 
       {/* Header with Logo */}
       <div className="relative z-10 w-full pt-16 px-6 flex justify-center">
         <div className="flex items-center gap-2 bg-black/40 backdrop-blur-md px-4 py-2 rounded-full border border-white/20 shadow-lg">
-          <span className="material-symbols-outlined text-white text-2xl">school</span>
+          <span className="material-symbols-outlined text-white text-2xl">
+            school
+          </span>
           <span className="text-white font-bold tracking-wide text-sm uppercase">
             CampusConnect
           </span>
@@ -37,8 +39,9 @@ export default function Home() {
             Unlock Your <br />
             <span className="text-primary bg-clip-text">Campus Life</span>
           </h1>
-          <p className="text-gray-400 text-base lg:text-lg font-medium leading-relaxed max-w-[320px] lg:max-w-[480px]">
-            The open platform for students to find jobs, events, and community opportunities.
+          <p className="text-gray-400 text-base lg:text-lg font-medium leading-relaxed max-w-80 lg:max-w-120">
+            The open platform for students to find jobs, events, and community
+            opportunities.
           </p>
         </div>
 
@@ -46,12 +49,14 @@ export default function Home() {
         <div className="w-full flex flex-col gap-3.5 mb-8 lg:max-w-lg">
           <Link href="/auth/signup">
             <button
-              className="group relative flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-xl h-[56px] px-5 bg-primary hover:bg-blue-500 transition-all duration-200 shadow-[0_0_20px_rgba(37,99,235,0.3)] active:scale-[0.98]"
-              onMouseEnter={() => setHoveredButton('signup')}
+              className="group relative flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-xl h-14 px-5 bg-primary hover:bg-blue-500 transition-all duration-200 shadow-[0_0_20px_rgba(37,99,235,0.3)] active:scale-[0.98]"
+              onMouseEnter={() => setHoveredButton("signup")}
               onMouseLeave={() => setHoveredButton(null)}
             >
               <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-              <span className="material-symbols-outlined text-white mr-3 text-[24px]">badge</span>
+              <span className="material-symbols-outlined text-white mr-3 text-[24px]">
+                badge
+              </span>
               <span className="text-white text-[17px] font-bold tracking-tight">
                 Connect with School ID
               </span>
@@ -59,8 +64,10 @@ export default function Home() {
           </Link>
 
           <Link href="/auth/email">
-            <button className="group flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-xl h-[56px] px-5 bg-white text-black border border-gray-200 hover:bg-gray-100 transition-all duration-200 active:scale-[0.98]">
-              <span className="material-symbols-outlined text-black mr-3 text-[24px]">mail</span>
+            <button className="group flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-xl h-14 px-5 bg-white text-black border border-gray-200 hover:bg-gray-100 transition-all duration-200 active:scale-[0.98]">
+              <span className="material-symbols-outlined text-black mr-3 text-[24px]">
+                mail
+              </span>
               <span className="text-black text-[17px] font-bold tracking-tight">
                 Continue with Email
               </span>
@@ -89,7 +96,7 @@ export default function Home() {
         {/* Footer Credits */}
         <div className="mt-10 text-center text-sm text-gray-500">
           <p>
-            Explore more{' '}
+            Explore more{" "}
             <a
               href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
               className="font-medium text-blue-400 hover:underline"
@@ -97,8 +104,8 @@ export default function Home() {
               rel="noopener noreferrer"
             >
               Templates
-            </a>{' '}
-            or the{' '}
+            </a>{" "}
+            or the{" "}
             <a
               href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
               className="font-medium text-blue-400 hover:underline"
@@ -106,7 +113,7 @@ export default function Home() {
               rel="noopener noreferrer"
             >
               Learning
-            </a>{' '}
+            </a>{" "}
             center.
           </p>
         </div>

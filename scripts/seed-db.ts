@@ -1,10 +1,30 @@
 import { createClient } from "@supabase/supabase-js";
+import * as fs from "fs";
+import * as path from "path";
+
+// Load environment variables from .env.local
+const envPath = path.join(process.cwd(), ".env.local");
+if (fs.existsSync(envPath)) {
+  const envContent = fs.readFileSync(envPath, "utf-8");
+  envContent.split("\n").forEach((line) => {
+    const trimmed = line.trim();
+    if (trimmed && !trimmed.startsWith("#")) {
+      const [key, ...valueParts] = trimmed.split("=");
+      const value = valueParts.join("=");
+      if (key) {
+        process.env[key.trim()] = value.trim();
+      }
+    }
+  });
+}
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 if (!supabaseUrl || !supabaseKey) {
   console.error("Missing Supabase credentials");
+  console.error("URL:", supabaseUrl ? "✓" : "✗");
+  console.error("Key:", supabaseKey ? "✓" : "✗");
   process.exit(1);
 }
 
@@ -12,135 +32,106 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 
 async function seedDatabase() {
   try {
-    console.log("Starting database seeding...");
+    console.log("🌱 Starting database seeding...");
 
     // Get or create test users
-    const testEmails = [
-      "designer@example.com",
-      "student1@example.com",
-      "student2@example.com",
+    const testUsers = [
+      {
+        email: "designer@example.com",
+        profile: {
+          full_name: "Sarah Designer",
+          headline: "UI/UX Designer | Creative",
+          university: "Tech University",
+          major: "Design",
+          year: "3rd Year",
+          bio: "Passionate about creating beautiful and functional user experiences.",
+        },
+      },
+      {
+        email: "developer@example.com",
+        profile: {
+          full_name: "Alex Developer",
+          headline: "Full Stack Developer | Tech Enthusiast",
+          university: "Tech University",
+          major: "Computer Science",
+          year: "2nd Year",
+          bio: "Love building scalable applications and learning new technologies.",
+        },
+      },
+      {
+        email: "student@example.com",
+        profile: {
+          full_name: "Jordan Student",
+          headline: "Computer Science Student",
+          university: "Tech University",
+          major: "Computer Science",
+          year: "1st Year",
+          bio: "Always eager to collaborate and learn from experienced professionals.",
+        },
+      },
     ];
+
     const userIds: string[] = [];
 
-    for (const email of testEmails) {
-      // Create user if doesn't exist
-      const { data: existingUser } = await supabase
-        .from("user_profiles")
-        .select("user_id")
-        .eq("full_name", email.split("@")[0])
-        .single()
-        .catch(() => ({ data: null }));
+    for (const testUser of testUsers) {
+      try {
+        // Check if user already exists
+        const { data: existingUser } = await supabase
+          .from("user_profiles")
+          .select("user_id")
+          .eq("full_name", testUser.profile.full_name)
+          .single();
 
-      if (!existingUser) {
-        const { data: authUser, error: authError } =
-          await supabase.auth.admin.createUser({
-            email,
-            password: "TestPassword123!",
-            email_confirm: true,
-          });
+        if (!existingUser) {
+          // Create auth user
+          const { data: authUser, error: authError } =
+            await supabase.auth.admin.createUser({
+              email: testUser.email,
+              password: "TestPassword123!",
+              email_confirm: true,
+            });
 
-        if (authError) {
-          console.log(`User ${email} might already exist or error:`, authError);
-        } else if (authUser?.user?.id) {
-          userIds.push(authUser.user.id);
+          if (authError) {
+            console.warn(`⚠️  User ${testUser.email} exists or error:`, authError.message);
+          } else if (authUser?.user?.id) {
+            userIds.push(authUser.user.id);
 
-          // Create user profile
-          await supabase.from("user_profiles").insert({
-            user_id: authUser.user.id,
-            full_name: email.split("@")[0],
-            headline: "Computer Science Student",
-            university: "Tech University",
-            major: "Computer Science",
-            verified: true,
-            rating: 4.8,
-            endorsements: 12,
-            year: "3rd Year",
-            avatar_url: `https://api.dicebear.com/7.x/avataaars/svg?seed=${email}`,
-          });
+            // Create user profile
+            const { error: profileError } = await supabase
+              .from("user_profiles")
+              .insert({
+                user_id: authUser.user.id,
+                ...testUser.profile,
+                verified: false,
+                rating: 5.0,
+                endorsements: 0,
+                avatar_url: `https://api.dicebear.com/7.x/avataaars/svg?seed=${testUser.email}`,
+              });
 
-          console.log(`✓ Created user: ${email}`);
+            if (profileError) {
+              console.warn(`⚠️  Error creating profile for ${testUser.email}:`, profileError.message);
+            } else {
+              console.log(`✅ Created user: ${testUser.profile.full_name} (${testUser.email})`);
+            }
+          }
+        } else {
+          console.log(`ℹ️  User ${testUser.profile.full_name} already exists`);
+          userIds.push(existingUser.user_id);
         }
+      } catch (error: any) {
+        console.warn(`⚠️  Error processing user ${testUser.email}:`, error.message);
       }
     }
 
-    // Get existing user if any
-    const { data: existingProfiles } = await supabase
-      .from("user_profiles")
-      .select("user_id")
-      .limit(1);
-
-    const mainUserId =
-      userIds[0] || (existingProfiles?.[0]?.user_id as string);
-
-    if (!mainUserId) {
-      console.error(
-        "Could not find or create a user for opportunities creation"
-      );
+    if (userIds.length === 0) {
+      console.warn("⚠️  No users available for creating opportunities");
       return;
     }
 
-    // Create sample opportunities
-    const opportunities = [
-      {
-        user_id: mainUserId,
-        title: "UI/UX Designer for Student Startup",
-        category: "gigs",
-        description:
-          "We are looking for a talented UI/UX Designer to join our team. You will be responsible for designing user interfaces for our mobile and web applications.\n\nRequirements:\n- Strong portfolio of UI/UX work\n- Proficiency in Figma or Adobe XD\n- Understanding of user-centered design principles\n- Excellent communication skills",
-        location: "Online",
-        deadline: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(), // 30 days from now
-        tags: ["Design", "Remote", "Paid"],
-        media_urls: [
-          "https://images.unsplash.com/photo-1561070791-2526d30994b5?w=500",
-        ],
-        status: "active",
-      },
-      {
-        user_id: mainUserId,
-        title: "Annual Campus Hackathon 2024",
-        category: "events",
-        description:
-          "Join us for the biggest hackathon of the year! This is your chance to showcase your coding skills, meet amazing developers, and potentially win great prizes.\n\nSchedule:\n- Day 1: Opening ceremony and team formation\n- Day 2: Hacking begins\n- Day 3: Final submissions and judging\n- Day 4: Awards ceremony\n\nPrizes: Up to $5000 in awards",
-        location: "Student Center, Main Hall",
-        deadline: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString(), // 14 days from now
-        tags: ["Hackathon", "Coding", "Competition"],
-        media_urls: [
-          "https://images.unsplash.com/photo-1552664730-d307ca884978?w=500",
-        ],
-        status: "active",
-      },
-      {
-        user_id: mainUserId,
-        title: "Weekend Study Group: Linear Algebra",
-        category: "collab",
-        description:
-          "Struggling with Linear Algebra? Join our study group! We meet every weekend to go through course material, solve problem sets together, and help each other understand difficult concepts.\n\nWhat we cover:\n- Matrix operations\n- Eigenvalues and eigenvectors\n- Systems of linear equations\n- Vector spaces\n\nNo prior knowledge required - all welcome!",
-        location: "Library Room 3B",
-        deadline: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000).toISOString(), // 60 days from now
-        tags: ["Study", "Math", "Collaboration"],
-        media_urls: [
-          "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=500",
-        ],
-        status: "active",
-      },
-    ];
-
-    for (const opp of opportunities) {
-      const { error } = await supabase
-        .from("opportunities")
-        .insert(opp)
-        .select();
-
-      if (error) {
-        console.log("Error inserting opportunity:", error);
-      } else {
-        console.log(`✓ Created opportunity: ${opp.title}`);
-      }
-    }
-
+    console.log(`\n📍 Created/found ${userIds.length} users`);
     console.log("✅ Database seeding completed!");
-  } catch (error) {
-    console.error("Error seeding database:", error);
+  } catch (error: any) {
+    console.error("❌ Error seeding database:", error.message);
     process.exit(1);
   }
 }

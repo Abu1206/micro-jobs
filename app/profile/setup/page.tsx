@@ -166,7 +166,7 @@ export default function ProfileSetup() {
       {/* Desktop Layout */}
       <div className="hidden lg:flex h-screen">
         {/* Left Panel - Info */}
-        <div className="w-1/2 bg-gradient-to-br from-primary/20 to-background-dark flex flex-col items-center justify-center p-12">
+        <div className="w-1/2 bg-linear-to-br from-primary/20 to-background-dark flex flex-col items-center justify-center p-12">
           <div className="max-w-md text-center">
             <h1 className="text-5xl font-bold text-white mb-6">
               Complete Your Profile
@@ -178,7 +178,7 @@ export default function ProfileSetup() {
 
             <div className="space-y-6">
               <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
+                <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center shrink-0">
                   <span className="material-symbols-outlined text-white">
                     image
                   </span>
@@ -192,7 +192,7 @@ export default function ProfileSetup() {
               </div>
 
               <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
+                <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center shrink-0">
                   <span className="material-symbols-outlined text-white">
                     person
                   </span>
@@ -207,7 +207,7 @@ export default function ProfileSetup() {
               </div>
 
               <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
+                <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center shrink-0">
                   <span className="material-symbols-outlined text-white">
                     work
                   </span>
@@ -338,7 +338,7 @@ export default function ProfileSetup() {
                     }
                   }}
                   placeholder="Add skills..."
-                  className="flex-1 min-w-[120px] bg-transparent border-none p-2 text-sm text-slate-900 dark:text-white placeholder-slate-500 focus:ring-0"
+                  className="flex-1 min-w-30 bg-transparent border-none p-2 text-sm text-slate-900 dark:text-white placeholder-slate-500 focus:ring-0"
                 />
               </div>
             </section>
@@ -587,7 +587,7 @@ export default function ProfileSetup() {
                     }
                   }}
                   placeholder="Add skills..."
-                  className="flex-1 min-w-[120px] bg-transparent border-none p-2 text-sm text-slate-900 dark:text-white placeholder-slate-500 focus:ring-0"
+                  className="flex-1 min-w-30 bg-transparent border-none p-2 text-sm text-slate-900 dark:text-white placeholder-slate-500 focus:ring-0"
                 />
               </div>
             </section>

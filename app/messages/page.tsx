@@ -9,7 +9,7 @@ interface Conversation {
   id: string;
   participantId: string;
   participantName: string;
-  participantAvatar: string;
+  participantAvatar?: string;
   lastMessage: string;
   lastMessageTime: string;
   isOnline: boolean;
@@ -24,122 +24,17 @@ interface Conversation {
 interface ActiveUser {
   id: string;
   name: string;
-  avatar: string;
+  avatar?: string;
   isOnline: boolean;
 }
-
-const MOCK_ACTIVE_USERS: ActiveUser[] = [
-  {
-    id: "1",
-    name: "Sarah",
-    avatar:
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuCynRdnEdv2NOdP6pSYNLQON12ct8iybpKQUAyVgvxUE7y-vBpiJrF_EIrmaMC6aT1zhHUZ8g8I8LbIOcN_aymQoOwwNaAdu-kfh0MoObujdh4H8IOYvqR5gyoeVh709sLJZi-Ogq9FQQo7AAAvPC1M7nInE1xZlGHhClD89HoM949iBVwIm9z9iftve4AsJ6WBC_g_ybf5GsmO_pRXK9sKnbilUv8kfkF2OKnWW_UCpry1opFK2tnv4hJPdmugx2aOpcp8PVfltGgP",
-    isOnline: true,
-  },
-  {
-    id: "2",
-    name: "Mike",
-    avatar:
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuAZ5hM7d5SRsfNSDJYhbmMNkc_RrM_Ahqy-NYjbxNBLNQSQt3O72xGL5nOFDjVoa9N5Br0FpP6nFNpKC4yWF0v-qSkxqZsZOfF2J9wMCElcMK5pgdt-OwESeJRgVauls0xWIdKfLjcJRw65o7d0C-mqkdahvv9E85dC7NklhsEd0p7o7A1BMuJWs1LteRC_A2opOGU3-wH9ak_zhdYZdWo00gRCZfFOrLx8v9hStoiHG3OK566hr4-tMftGmpPPkZwslxeC4g-0xJ-i",
-    isOnline: true,
-  },
-  {
-    id: "3",
-    name: "Emily",
-    avatar:
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuAGNVsB3aw9QBUqKau9ZJOhjDyIt9nqGP6yK25osywdZx1Zr3NgSwEtnqjqEvxb5qC6OaWo1Nd1E-iVrpxhqoZe9FuF4PV3Nb0Wjy0212oNyAlZrwPMB46FkH4UZx208T_p_zbWhkLBJsONqzi_tGLCWKQX1QwgOooYrxFk6s4HhJGFeU3ym28SHdYYb5L5w_9cglE0DhPo2b0yR3sK1WOlj01KrnLEr-WZdOFTS8wqhLTCoJNpITjpq_DWb3Aj7w7uyAoIfIUXcAGd",
-    isOnline: false,
-  },
-  {
-    id: "4",
-    name: "David",
-    avatar:
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuAlgk1eSUPN5OIap0rfnOlcf8_jAI6TV47XvR9B1tEttOKruQTVfjYugW21b7ZCXzalqwwdIjahAEQYwCOHbVf9UGKP97Rgk7uZ6c3KkHf2ujip_GIyChLwk4zMI6L0cHazLS98_iOFv_kFRjPkC_SOSMh6JssN6RHTJA30LW5QDxjkFU_mhapKNXb-X5rlxFs7Zl9iBq3ao-VdywoGSbB0qWGYCfmL8xawNN1U1RHGfw_AJ4El6lsyVz6DfTjt9gWUIknq9ZnogHbX",
-    isOnline: false,
-  },
-];
-
-const MOCK_CONVERSATIONS: Conversation[] = [
-  {
-    id: "1",
-    participantId: "alex-johnson",
-    participantName: "Alex Johnson",
-    participantAvatar:
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuDUl1y93l0Xii93aAIQldxlCMsxkCCAXRdsFEw7HMjSf0A1a3j0ZZLDHYnrgX-loDwyefhk60FWQshLvjAS5azrD_4db74fSS8SMK8Z-Npiheq8YqxAXV85FnlDnOB8KQrZIkiDF-01IPPBRRlpoHTYLuvqcqDiBrUcuhRjSXRKK9ZMCLPOBml0oaytsEzgvXBslBrLv6Us1lea_ETOe72dcZLrKNASWr-S7GTWk5dJEzLCrT3JsGVxqehWZaoUkPHIU-tYg0z2qFmL",
-    lastMessage:
-      "Hey! Are you free to discuss the portfolio requirements? I have some updates on the timeline.",
-    lastMessageTime: "2m",
-    isOnline: true,
-    unread: true,
-    opportunityContext: {
-      id: "1",
-      title: "Graphic Design Internship",
-      icon: "work",
-    },
-  },
-  {
-    id: "2",
-    participantId: "jessica-lee",
-    participantName: "Jessica Lee",
-    participantAvatar:
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuDCRznaMNurYE0MjYg79qrPr82KHyh0t06aCKjpo3tnOaY-BiGq1u6Sb9ApAqrMYcmi-uwEQsONKe8EAGGLNAXQ5GUmJopcXS-5t4NYDfBzdsMcgXH6O-4heT3nxXuHER195pt_iWjVobi7h8pVZM48PEd4kc9LgbkIdT0VlplEGE2gnH8VOyHwoi3fVKS-iiBP2bWb4rvUaKtElzyggkNQiZggiEM3zLdnWND1xRnFjRgOWk_2MuJdK2EfHl6s5KjD5YaX1wApt53z",
-    lastMessage:
-      "See you at the kickoff event tomorrow! Don't forget your laptop.",
-    lastMessageTime: "1h",
-    isOnline: false,
-    unread: false,
-    opportunityContext: {
-      id: "2",
-      title: "Spring Hackathon",
-      icon: "code",
-    },
-  },
-  {
-    id: "3",
-    participantId: "mark-peterson",
-    participantName: "Mark Peterson",
-    participantAvatar: undefined,
-    lastMessage:
-      "Thanks for sharing that link. I'll check it out later tonight.",
-    lastMessageTime: "3h",
-    isOnline: false,
-    unread: false,
-  },
-  {
-    id: "4",
-    participantId: "ryan-co",
-    participantName: "Ryan Co",
-    participantAvatar:
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuBdc0-AXAd5IJod1P33bXLmzxp-uQiCLLkWPcZClo8nyKxpkdZTNZNkYtpDV4dGkDOhPRGwBy0kBonyzx8PxU01jNwrohQgCZUdm_VpU8MLK6ZEueF2V2XOYl-oZGbHlUtUfvUM71hEvOSzEA9LCYeehVO1KB21EFB_ff5By4RK1o0thUUgt5zRK1n2pJSPgmSAKaESL8dlY7YADQhH8MXqpA9LaGoL3KZpufE1F4J6iALXlSsf6aY2jvKiXnLf5XooQj2avHtTAYul",
-    lastMessage: "Should we bring our own gloves?",
-    lastMessageTime: "Yesterday",
-    isOnline: false,
-    unread: false,
-    opportunityContext: {
-      id: "3",
-      title: "Campus Garden Clean-up",
-      icon: "volunteer_activism",
-    },
-  },
-  {
-    id: "5",
-    participantId: "chloe-davis",
-    participantName: "Chloe Davis",
-    participantAvatar:
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuC5Rm3pp1Upf-kEd0I0kPRHmYtiU6prM5DH2lQOaCjudtZr-xb0l2JKDwQiMe0OQwHNc7Lf91zmk4mTO3cA6YWYeDsDtJHdi5LqhMhg-CuXaMmRoyfyWMlo79hljKhzI43N7KWM-eJ4V5cUakJH3yBgMbatvID5vfh54qwF8nhOUsTUI2Eesud6iPzmeR3cwTi5NwLNUVAQXacKvil_7huJb1aIgJy54zu_yctBgBF1MXy2O6qjhFjleuSYlp6LvcWtbjkuTGgW9V4F",
-    lastMessage: "Sent an image",
-    lastMessageTime: "Yesterday",
-    isOnline: false,
-    unread: false,
-  },
-];
 
 export default function Messages() {
   const router = useRouter();
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
-  const [conversations, setConversations] = useState(MOCK_CONVERSATIONS);
+  const [conversations, setConversations] = useState<Conversation[]>([]);
+  const [activeUsers, setActiveUsers] = useState<ActiveUser[]>([]);
   const supabase = createClient();
 
   useEffect(() => {
@@ -147,13 +42,39 @@ export default function Messages() {
       const {
         data: { user },
       } = await supabase.auth.getUser();
+      setUser(user);
 
-      if (!user) {
-        router.push("/auth/login");
-        return;
+      if (user) {
+        // Fetch conversations from database
+        const { data: convData } = await supabase
+          .from("conversations")
+          .select("*")
+          .or(`participant_1_id.eq.${user.id},participant_2_id.eq.${user.id}`)
+          .order("last_message_at", { ascending: false });
+
+        if (convData) {
+          setConversations(convData as Conversation[]);
+        }
+
+        // Fetch online users from user_profiles
+        const { data: usersData } = await supabase
+          .from("user_profiles")
+          .select("id, full_name, avatar_url")
+          .neq("user_id", user.id)
+          .limit(8);
+
+        if (usersData) {
+          setActiveUsers(
+            usersData.map((u: any) => ({
+              id: u.id,
+              name: u.full_name,
+              avatar: u.avatar_url,
+              isOnline: Math.random() > 0.5,
+            }))
+          );
+        }
       }
 
-      setUser(user);
       setLoading(false);
     };
 
@@ -161,7 +82,7 @@ export default function Messages() {
   }, []);
 
   const filteredConversations = conversations.filter((conv) =>
-    conv.participantName.toLowerCase().includes(searchQuery.toLowerCase())
+    conv.participantName?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const unreadCount = conversations.filter((c) => c.unread).length;
@@ -230,7 +151,7 @@ export default function Messages() {
             </div>
             <div className="flex overflow-x-auto no-scrollbar px-5 gap-4 pb-2">
               {/* Add Note */}
-              <div className="flex flex-col items-center space-y-1.5 min-w-[64px]">
+              <div className="flex flex-col items-center space-y-1.5 min-w-16">
                 <div className="w-16 h-16 rounded-full border-2 border-dashed border-gray-300 dark:border-gray-700 flex items-center justify-center bg-gray-50 dark:bg-surface-dark text-gray-400 hover:border-primary hover:text-primary transition-colors cursor-pointer">
                   <span className="material-symbols-outlined">add</span>
                 </div>
@@ -240,18 +161,18 @@ export default function Messages() {
               </div>
 
               {/* Active Users */}
-              {MOCK_ACTIVE_USERS.map((activeUser) => (
+              {activeUsers.map((activeUser) => (
                 <div
                   key={activeUser.id}
-                  className="flex flex-col items-center space-y-1.5 min-w-[64px] relative group cursor-pointer"
+                  className="flex flex-col items-center space-y-1.5 min-w-16 relative group cursor-pointer"
                 >
                   <div className="relative">
                     {activeUser.isOnline && (
-                      <div className="p-0.5 rounded-full bg-gradient-to-tr from-primary to-transparent">
+                      <div className="p-0.5 rounded-full bg-linear-to-tr from-primary to-transparent">
                         <img
                           alt={activeUser.name}
                           src={activeUser.avatar}
-                          className="w-[60px] h-[60px] rounded-full object-cover border-2 border-background-light dark:border-background-dark"
+                          className="w-15 h-15 rounded-full object-cover border-2 border-background-light dark:border-background-dark"
                         />
                       </div>
                     )}
@@ -259,7 +180,7 @@ export default function Messages() {
                       <img
                         alt={activeUser.name}
                         src={activeUser.avatar}
-                        className="w-[60px] h-[60px] rounded-full object-cover border-2 border-transparent group-hover:border-gray-300 dark:group-hover:border-gray-700 transition-all"
+                        className="w-15 h-15 rounded-full object-cover border-2 border-transparent group-hover:border-gray-300 dark:group-hover:border-gray-700 transition-all"
                       />
                     )}
                     {activeUser.isOnline && (
@@ -300,11 +221,11 @@ export default function Messages() {
                           alt={conv.participantName}
                           src={conv.participantAvatar}
                           className={`w-14 h-14 rounded-full object-cover shadow-sm ${
-                            !conv.isOnline ? "grayscale-[20%]" : ""
+                            !conv.isOnline ? "grayscale-20" : ""
                           }`}
                         />
                       ) : (
-                        <div className="w-14 h-14 rounded-full bg-gradient-to-br from-gray-700 to-black dark:from-gray-600 dark:to-gray-900 flex items-center justify-center text-white font-bold text-lg shadow-inner">
+                        <div className="w-14 h-14 rounded-full bg-linear-to-br from-gray-700 to-black dark:from-gray-600 dark:to-gray-900 flex items-center justify-center text-white font-bold text-lg shadow-inner">
                           {conv.participantName
                             .split(" ")
                             .map((n) => n[0])

@@ -108,7 +108,7 @@ export default function GuestBrowse() {
       </header>
 
       {/* Hero Section */}
-      <section className="bg-gradient-to-b from-primary/20 to-transparent py-12 lg:py-20 px-6">
+      <section className="bg-linear-to-b from-primary/20 to-transparent py-12 lg:py-20 px-6">
         <div className="max-w-7xl mx-auto text-center">
           <h1 className="text-4xl lg:text-5xl font-bold mb-4">
             Browse Campus Opportunities
@@ -287,7 +287,7 @@ export default function GuestBrowse() {
       </div>
 
       {/* CTA Section */}
-      <section className="bg-gradient-to-r from-primary/20 to-transparent py-12 lg:py-16 px-6 mt-12">
+      <section className="bg-linear-to-r from-primary/20 to-transparent py-12 lg:py-16 px-6 mt-12">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl lg:text-4xl font-bold mb-4">
             Ready to Get Started?

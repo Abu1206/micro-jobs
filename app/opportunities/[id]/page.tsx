@@ -105,8 +105,7 @@ export default function OpportunityDetails() {
           .from("opportunities")
           .select("*")
           .eq("id", id)
-          .single()
-          .catch(() => ({ data: null, error: "DB not setup" }));
+          .single();
 
         if (oppError || !oppData) {
           // Fallback to mock data for development
@@ -129,8 +128,7 @@ export default function OpportunityDetails() {
             .from("user_profiles")
             .select("*")
             .eq("user_id", oppData.user_id)
-            .single()
-            .catch(() => ({ data: null, error: "Profile not found" }));
+            .single();
 
           if (!profileError && profileData) {
             setCreator(profileData);
@@ -339,7 +337,7 @@ export default function OpportunityDetails() {
           {creator && (
             <Link href={`/profile/${creator.id}`}>
               <div className="mb-8 relative group cursor-pointer">
-                <div className="absolute -inset-0.5 bg-gradient-to-r from-primary/50 to-blue-600/50 rounded-2xl opacity-20 group-hover:opacity-40 transition duration-300 blur"></div>
+                <div className="absolute -inset-0.5 bg-linear-to-r from-primary/50 to-blue-600/50 rounded-2xl opacity-20 group-hover:opacity-40 transition duration-300 blur"></div>
                 <div className="relative flex items-center gap-4 p-4 rounded-2xl bg-white dark:bg-surface-dark border border-gray-100 dark:border-white/10">
                   <div className="relative">
                     <img

@@ -26,77 +26,12 @@ interface Testimonial {
   date: string;
 }
 
-const MOCK_PROFILE = {
-  full_name: "Alex Rivera",
-  major: "Computer Science",
-  university: "State University",
-  profile_photo_url:
-    "https://lh3.googleusercontent.com/aida-public/AB6AXuC5v9C51_AaWA88mg_E4cpJ6mhfDSmyoxvqk5FyQlsMY-I_Tnq_R58c9e0a5LqT8JlmjNqEFo5AHBb5JXiSFi-L8eDYRL-VlynU-mjUSs46cqWCj0AEgCzKXLH9Xh735HvB0oUXdi27Sxm4-4-0COYvbnZYzceyoI-oT5-hAYWRYte2BI66SJm3X_ecdhel-T8oI9i3y6g-L-oKqDd-1stYSGw_S0AYnWBofLmfF2caiCky0rkAOdlp0_CzjQGk829zsd6GS9gcDXg2",
-  about:
-    "Junior developer passionate about open source and community building. Always looking for new hackathons and collaborative projects to sharpen my skills in React and Swift.",
-  skills: [
-    "Python",
-    "Public Speaking",
-    "Event Planning",
-    "UX Design",
-    "SwiftUI",
-  ],
-  github_url: "https://github.com/alexrivera_dev",
-  behance_url: "https://behance.net/alexrivera",
-  rating: 4.8,
-  endorsements: 342,
-};
-
-const MOCK_ACHIEVEMENTS: Achievement[] = [
-  {
-    id: "1",
-    title: "Verified\nStudent",
-    icon: "verified",
-    gradient: "from-purple-500 to-indigo-600",
-    ring: "ring-purple-500/30",
-  },
-  {
-    id: "2",
-    title: "Top\nMentor",
-    icon: "school",
-    gradient: "from-primary to-blue-800",
-    ring: "ring-primary/30",
-  },
-  {
-    id: "3",
-    title: "Early\nBird",
-    icon: "rocket_launch",
-    gradient: "from-orange-400 to-red-500",
-    ring: "ring-orange-400/30",
-  },
-  {
-    id: "4",
-    title: "Locked",
-    icon: "lock",
-    gradient: "bg-gray-100 dark:bg-surface-dark",
-    ring: "",
-    locked: true,
-  },
-];
-
-const MOCK_ENDORSEMENTS: Endorsement[] = [
-  { skill: "Team Leadership", count: 24, percentage: 80 },
-  { skill: "Python Development", count: 18, percentage: 60 },
-  { skill: "Event Management", count: 12, percentage: 40 },
-];
-
-const MOCK_TESTIMONIAL: Testimonial = {
-  text: "Alex was a great team lead for the hackathon! Organized and kept morale high.",
-  author: "Sarah J.",
-  date: "2 days ago",
-};
-
 export default function PublicProfile() {
   const params = useParams();
   const router = useRouter();
   const userId = params.userId as string;
 
-  const [profile, setProfile] = useState<any>(MOCK_PROFILE);
+  const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [isConnected, setIsConnected] = useState(false);
   const [currentUser, setCurrentUser] = useState<any>(null);
@@ -115,18 +50,17 @@ export default function PublicProfile() {
           .from("user_profiles")
           .select("*")
           .eq("id", userId)
-          .single()
-          .catch(() => ({ data: null, error: "Not found" }));
+          .single();
 
         if (profileData) {
           setProfile(profileData);
         } else {
-          // Use mock data
-          setProfile(MOCK_PROFILE);
+          console.log("Profile not found");
+          setProfile(null);
         }
       } catch (err) {
         console.error("Error fetching profile:", err);
-        setProfile(MOCK_PROFILE);
+        setProfile(null);
       } finally {
         setLoading(false);
       }
@@ -229,7 +163,7 @@ export default function PublicProfile() {
             <div className="flex w-full gap-3 justify-center">
               <button
                 onClick={handleConnect}
-                className={`flex-1 max-w-[160px] h-11 items-center justify-center rounded-lg text-sm font-bold tracking-wide transition-all ${
+                className={`flex-1 max-w-40 h-11 items-center justify-center rounded-lg text-sm font-bold tracking-wide transition-all ${
                   isConnected
                     ? "bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white hover:bg-gray-300 dark:hover:bg-gray-600"
                     : "bg-primary text-white hover:brightness-110 shadow-[0_0_15px_rgba(37,99,235,0.3)]"
@@ -239,7 +173,7 @@ export default function PublicProfile() {
               </button>
               <button
                 onClick={handleMessage}
-                className="flex-1 max-w-[160px] h-11 items-center justify-center rounded-lg bg-gray-100 dark:bg-surface-dark border border-gray-200 dark:border-gray-800 text-gray-900 dark:text-white text-sm font-bold tracking-wide hover:bg-gray-200 dark:hover:bg-gray-700 transition-all"
+                className="flex-1 max-w-40 h-11 items-center justify-center rounded-lg bg-gray-100 dark:bg-surface-dark border border-gray-200 dark:border-gray-800 text-gray-900 dark:text-white text-sm font-bold tracking-wide hover:bg-gray-200 dark:hover:bg-gray-700 transition-all"
               >
                 Message
               </button>
@@ -381,39 +315,30 @@ export default function PublicProfile() {
               Achievements
             </h3>
             <div className="flex overflow-x-auto px-4 gap-4 no-scrollbar pb-2">
-              {MOCK_ACHIEVEMENTS.map((achievement) => (
-                <div
-                  key={achievement.id}
-                  className="flex flex-col items-center gap-2 min-w-[80px]"
-                >
+              {profile?.achievements && profile.achievements.length > 0 ? (
+                profile.achievements.map((achievement: any) => (
                   <div
-                    className={`w-16 h-16 rounded-full flex items-center justify-center shadow-lg border-2 border-background-light dark:border-background-dark ${
-                      achievement.locked
-                        ? "bg-gray-100 dark:bg-surface-dark"
-                        : `bg-gradient-to-br ${achievement.gradient} ring-2 ${achievement.ring}`
-                    }`}
+                    key={achievement.id}
+                    className="flex flex-col items-center gap-2 min-w-20"
                   >
-                    <span
-                      className={`material-symbols-outlined text-2xl ${
-                        achievement.locked
-                          ? "text-gray-400 dark:text-gray-500"
-                          : "text-white"
-                      }`}
+                    <div
+                      className={`w-16 h-16 rounded-full flex items-center justify-center shadow-lg border-2 border-background-light dark:border-background-dark bg-linear-to-br from-primary/50 to-primary/20 ring-2 ring-primary/30`}
                     >
-                      {achievement.icon}
-                    </span>
+                      <span
+                        className="material-symbols-outlined text-white"
+                        style={{ fontSize: "32px" }}
+                      >
+                        {achievement.icon || "verified"}
+                      </span>
+                    </div>
+                    <p className="text-xs font-bold text-center text-slate-900 dark:text-white">
+                      {achievement.title}
+                    </p>
                   </div>
-                  <span
-                    className={`text-xs font-semibold text-center leading-tight ${
-                      achievement.locked
-                        ? "text-gray-400 dark:text-gray-500"
-                        : "text-slate-900 dark:text-white"
-                    }`}
-                  >
-                    {achievement.title}
-                  </span>
-                </div>
-              ))}
+                ))
+              ) : (
+                <p className="text-gray-400 text-sm">No achievements yet</p>
+              )}
             </div>
           </div>
 
@@ -423,24 +348,28 @@ export default function PublicProfile() {
               Top Endorsements
             </h3>
             <div className="flex flex-col gap-4">
-              {MOCK_ENDORSEMENTS.map((endorsement) => (
-                <div key={endorsement.skill} className="flex flex-col gap-2">
-                  <div className="flex justify-between items-end">
-                    <span className="font-medium text-sm text-slate-900 dark:text-white">
-                      {endorsement.skill}
-                    </span>
-                    <span className="text-primary font-bold text-sm">
-                      {endorsement.count}
-                    </span>
+              {profile?.endorsements && profile.endorsements.length > 0 ? (
+                profile.endorsements.map((endorsement: any) => (
+                  <div key={endorsement.skill} className="flex flex-col gap-2">
+                    <div className="flex justify-between items-end">
+                      <span className="font-medium text-sm text-slate-900 dark:text-white">
+                        {endorsement.skill}
+                      </span>
+                      <span className="text-primary font-bold text-sm">
+                        {endorsement.count || 0}
+                      </span>
+                    </div>
+                    <div className="h-2 w-full bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-primary rounded-full shadow-[0_0_10px_rgba(37,99,235,0.5)]"
+                        style={{ width: `${endorsement.percentage || 0}%` }}
+                      ></div>
+                    </div>
                   </div>
-                  <div className="h-2 w-full bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-primary rounded-full shadow-[0_0_10px_rgba(37,99,235,0.5)]"
-                      style={{ width: `${endorsement.percentage}%` }}
-                    ></div>
-                  </div>
-                </div>
-              ))}
+                ))
+              ) : (
+                <p className="text-gray-400 text-sm">No endorsements yet</p>
+              )}
             </div>
           </div>
 
@@ -453,7 +382,7 @@ export default function PublicProfile() {
               <div className="flex items-center gap-4 mb-4">
                 <div className="flex flex-col items-center">
                   <span className="text-3xl font-extrabold text-gray-900 dark:text-white">
-                    {profile.rating}
+                    {profile?.rating || 5}
                   </span>
                   <div className="flex text-yellow-400 text-sm">
                     {[...Array(5)].map((_, i) => (
@@ -488,11 +417,11 @@ export default function PublicProfile() {
                     format_quote
                   </span>
                   <p className="text-sm italic text-gray-600 dark:text-gray-300">
-                    {MOCK_TESTIMONIAL.text}
+                    {profile?.bio || "Great to work with!"}
                   </p>
                 </div>
                 <p className="text-right text-xs text-gray-400 font-medium mt-1">
-                  - {MOCK_TESTIMONIAL.author}, {MOCK_TESTIMONIAL.date}
+                  - {profile?.full_name || "User"}, Recently
                 </p>
               </div>
             </div>
