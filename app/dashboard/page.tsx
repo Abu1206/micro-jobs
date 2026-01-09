@@ -148,19 +148,21 @@ export default function Dashboard() {
           <button className="flex shrink-0 items-center justify-center h-9 w-9 rounded-lg bg-surface-light dark:bg-surface-dark border border-gray-200 dark:border-white/10 text-slate-900 dark:text-white shadow-sm hover:bg-gray-50 dark:hover:bg-white/5">
             <span className="material-symbols-outlined text-[20px]">tune</span>
           </button>
-          {["All", "Trending", "Local", "Remote", "Hackathons"].map((filter) => (
-            <button
-              key={filter}
-              onClick={() => setSelectedFilter(filter)}
-              className={`flex h-9 shrink-0 items-center px-4 rounded-lg text-sm font-medium transition-colors ${
-                selectedFilter === filter
-                  ? "bg-slate-900 dark:bg-white text-white dark:text-background-dark"
-                  : "bg-surface-light dark:bg-surface-dark border border-gray-200 dark:border-white/5 text-slate-600 dark:text-white hover:bg-gray-50 dark:hover:bg-white/5"
-              }`}
-            >
-              {filter}
-            </button>
-          ))}
+          {["All", "Trending", "Local", "Remote", "Hackathons"].map(
+            (filter) => (
+              <button
+                key={filter}
+                onClick={() => setSelectedFilter(filter)}
+                className={`flex h-9 shrink-0 items-center px-4 rounded-lg text-sm font-medium transition-colors ${
+                  selectedFilter === filter
+                    ? "bg-slate-900 dark:bg-white text-white dark:text-background-dark"
+                    : "bg-surface-light dark:bg-surface-dark border border-gray-200 dark:border-white/5 text-slate-600 dark:text-white hover:bg-gray-50 dark:hover:bg-white/5"
+                }`}
+              >
+                {filter}
+              </button>
+            )
+          )}
         </div>
       </header>
 
@@ -366,9 +368,11 @@ export default function Dashboard() {
       </main>
 
       {/* Floating Action Button */}
-      <button className="fixed bottom-24 lg:bottom-8 right-4 lg:right-8 h-14 w-14 rounded-full bg-primary text-white shadow-lg shadow-primary/25 flex items-center justify-center z-40 hover:scale-105 transition-transform cursor-pointer">
-        <span className="material-symbols-outlined text-[32px]">add</span>
-      </button>
+      <Link href="/create-opportunity">
+        <button className="fixed bottom-24 lg:bottom-8 right-4 lg:right-8 h-14 w-14 rounded-full bg-primary text-white shadow-lg shadow-primary/25 flex items-center justify-center z-40 hover:scale-105 transition-transform cursor-pointer">
+          <span className="material-symbols-outlined text-[32px]">add</span>
+        </button>
+      </Link>
 
       {/* Bottom Navigation (Mobile Only) */}
       <nav className="fixed bottom-0 w-full bg-surface-light dark:bg-surface-dark border-t border-gray-200 dark:border-white/5 pb-6 pt-3 px-6 z-50 lg:hidden">
@@ -405,7 +409,10 @@ export default function Dashboard() {
             </a>
           </li>
           <li>
-            <a className="flex flex-col items-center gap-1 group" href="/dashboard">
+            <a
+              className="flex flex-col items-center gap-1 group"
+              href="/dashboard"
+            >
               <span className="material-symbols-outlined text-gray-400 text-[28px] group-hover:text-primary transition-colors">
                 person
               </span>
@@ -452,3 +459,6 @@ export default function Dashboard() {
           </div>
         </div>
       </nav>
+    </div>
+  );
+}
