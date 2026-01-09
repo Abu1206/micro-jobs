@@ -1,11 +1,13 @@
 # CampusConnect - Setup Guide
 
 ## Project Overview
+
 CampusConnect is a Next.js 16 application built with React 19, Tailwind CSS, and Supabase for connecting students with campus opportunities including jobs, events, and community connections.
 
 ## Installation & Setup
 
 ### Prerequisites
+
 - Node.js 18+ installed
 - npm or yarn package manager
 - Supabase account
@@ -21,6 +23,7 @@ SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key_here
 ```
 
 Get these values from your Supabase project settings:
+
 1. Go to https://supabase.com/dashboard
 2. Select your project
 3. Navigate to Settings > API
@@ -31,6 +34,7 @@ Get these values from your Supabase project settings:
 Create the following tables in your Supabase database:
 
 #### user_profiles table
+
 ```sql
 CREATE TABLE user_profiles (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -51,6 +55,7 @@ CREATE TABLE user_profiles (
 ```
 
 #### job_listings table
+
 ```sql
 CREATE TABLE job_listings (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -68,6 +73,7 @@ CREATE TABLE job_listings (
 ```
 
 #### events table
+
 ```sql
 CREATE TABLE events (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -83,6 +89,7 @@ CREATE TABLE events (
 ```
 
 #### job_applications table
+
 ```sql
 CREATE TABLE job_applications (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -103,12 +110,12 @@ Enable Storage in Supabase:
 3. Add the following bucket policy:
 
 ```sql
-CREATE POLICY "Allow authenticated uploads" 
-ON storage.objects FOR INSERT 
+CREATE POLICY "Allow authenticated uploads"
+ON storage.objects FOR INSERT
 WITH CHECK (auth.role() = 'authenticated');
 
-CREATE POLICY "Allow public reads" 
-ON storage.objects FOR SELECT 
+CREATE POLICY "Allow public reads"
+ON storage.objects FOR SELECT
 USING (true);
 ```
 
@@ -162,27 +169,32 @@ micro-jobs/
 ## Pages Overview
 
 ### Public Pages
+
 - **Home** (`/`) - Landing page with auth options
 - **Guest Browse** (`/guest`) - Browse jobs and events without account
 - **Public Profile** (`/profile/[userId]`) - View user profiles
 
 ### Authentication Pages
+
 - **Sign Up** (`/auth/signup`) - Create account with email/password
 - **Log In** (`/auth/login`) - Login with credentials
 - **Verify Email** (`/auth/verify-email`) - Email verification page
 
 ### Authenticated Pages
+
 - **Profile Setup** (`/profile/setup`) - Complete profile after signup
 - **Dashboard** (`/dashboard`) - User dashboard with quick actions
 
 ## API Routes
 
 ### Authentication
+
 - `POST /api/auth/signup` - Register new user
 - `POST /api/auth/login` - Login user
 - `POST /api/auth/logout` - Logout user
 
 ### Profile
+
 - `GET /api/profile` - Get current user profile
 - `POST /api/profile` - Update user profile
 - `POST /api/profile/upload-photo` - Upload profile photo
@@ -190,6 +202,7 @@ micro-jobs/
 ## Features
 
 ### ✅ Implemented
+
 - [x] User authentication with Supabase
 - [x] Profile creation and editing
 - [x] Profile photo uploads
@@ -202,6 +215,7 @@ micro-jobs/
 - [x] Dark mode support
 
 ### 🚀 Ready to Implement
+
 - [ ] Job applications
 - [ ] Event registration
 - [ ] Messaging system
@@ -224,17 +238,20 @@ micro-jobs/
 ## Development Tips
 
 ### Running in Development
+
 ```bash
 npm run dev
 ```
 
 ### Building for Production
+
 ```bash
 npm run build
 npm start
 ```
 
 ### Linting
+
 ```bash
 npm run lint
 ```
@@ -242,12 +259,14 @@ npm run lint
 ## Deployment
 
 ### Deploy to Vercel (Recommended)
+
 1. Push your code to GitHub
 2. Connect your repo to Vercel
 3. Add environment variables in Vercel dashboard
 4. Deploy!
 
 ### Manual Deployment
+
 1. Build: `npm run build`
 2. Export: `npm export`
 3. Deploy the `out` directory to your hosting
@@ -255,16 +274,19 @@ npm run lint
 ## Troubleshooting
 
 ### Supabase Connection Issues
+
 - Verify environment variables are correctly set
 - Check Supabase URL and keys in the dashboard
 - Ensure network access is allowed
 
 ### Database Issues
+
 - Run migrations in Supabase SQL editor
 - Check table names match the code
 - Verify RLS (Row Level Security) policies
 
 ### Build Errors
+
 - Clear `.next` folder: `rm -rf .next`
 - Reinstall dependencies: `rm -rf node_modules && npm install`
 - Check Node.js version: `node --version` (requires 18+)

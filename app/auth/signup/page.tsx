@@ -51,7 +51,7 @@ export default function SignUp() {
 
       if (error) throw error;
 
-      router.push("/auth/verify-email");
+      router.push("/profile/setup");
     } catch (err: any) {
       setError(err.message || "An error occurred during sign up");
     } finally {

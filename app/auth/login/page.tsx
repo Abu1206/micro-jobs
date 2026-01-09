@@ -36,7 +36,7 @@ export default function Login() {
 
       if (error) throw error;
 
-      router.push("/dashboard");
+      router.push("/profile/setup");
     } catch (err: any) {
       setError(err.message || "An error occurred during login");
     } finally {

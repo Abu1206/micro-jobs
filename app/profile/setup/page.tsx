@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
@@ -28,10 +28,8 @@ export default function ProfileSetup() {
   ]);
   const [skillInput, setSkillInput] = useState("");
   const [loading, setLoading] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const router = useRouter();
-  const supabase = createClient();
-
+  const [authLoading, setAuthLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [formData, setFormData] = useState({
     fullName: "",
     headline: "",
@@ -42,6 +40,39 @@ export default function ProfileSetup() {
     behance: "",
     linkedin: "",
   });
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const router = useRouter();
+  const supabase = createClient();
+
+  // Check authentication on mount
+  useEffect(() => {
+    const checkAuth = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (!user) {
+        router.push("/auth/login");
+      } else {
+        setIsAuthenticated(true);
+        setAuthLoading(false);
+      }
+    };
+
+    checkAuth();
+  }, []);
+
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-background-dark flex items-center justify-center">
+        <div className="text-white text-lg">Loading...</div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return null;
+  }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
