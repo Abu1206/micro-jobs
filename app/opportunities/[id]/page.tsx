@@ -43,6 +43,55 @@ export default function OpportunityDetails() {
 
   const supabase = createClient();
 
+  // Mock data for development
+  const MOCK_OPPORTUNITIES: Record<string, OpportunityData> = {
+    "1": {
+      id: "1",
+      title: "UI/UX Designer for Student Startup",
+      category: "gigs",
+      description:
+        "We are looking for a talented UI/UX Designer to join our team. You will be responsible for designing user interfaces for our mobile and web applications.\n\nRequirements:\n- Strong portfolio of UI/UX work\n- Proficiency in Figma or Adobe XD\n- Understanding of user-centered design principles\n- Excellent communication skills",
+      location: "Online",
+      deadline: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+      tags: ["Design", "Remote", "Paid"],
+      media_urls: [
+        "https://lh3.googleusercontent.com/aida-public/AB6AXuBDrl8vSVia_48qHfvVVvhX8F7TGgWCLt58orNXOdBr06Ofcyrh1oivf9C5rp3qph73xHQQVM2wxLQ--UAxOPJ_oS56UMR2agy8SRpgUoxx66DXBm_QoRsWNiwIcJg-6tOyjOJc-KgTVAJhepAv-KomFgcl3u-Tb1dm16de1y6dqoTXDBEWIdXpEVV-UcOJHa9uE_e-PqsCxMoAm-fnZ55ENDKr5VT_elFQt2sFV86yutStOudZynRme2KEpxlg6gDpbCIG_SyBX4wM",
+      ],
+      user_id: "mock-user",
+      created_at: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+      status: "active",
+    },
+    "2": {
+      id: "2",
+      title: "Annual Campus Hackathon 2024",
+      category: "events",
+      description:
+        "Join us for the biggest hackathon of the year! This is your chance to showcase your coding skills, meet amazing developers, and potentially win great prizes.\n\nSchedule:\n- Day 1: Opening ceremony\n- Day 2-3: Hacking\n- Day 4: Awards\n\nPrizes: Up to $5000",
+      location: "Student Center, Main Hall",
+      deadline: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString(),
+      tags: ["Hackathon", "Coding", "Competition"],
+      media_urls: [
+        "https://lh3.googleusercontent.com/aida-public/AB6AXuCZI9zTe_nG7qMvnV0aqI8A0MrNFRsrJOw7gdwQRnjmvO0css6y858KFFFgud1kv3r9F-maeIisRZ4crLdfsdVWOzLKiT0zpBLvnv7FcKUWuy9ilEpzg1-ic6WvYpD6h4Ewpfsv4e0hBCPWcFvf2vljOUt5TAj7q5Q_MrU93-C8O8pO4cEsxXi1FE3Agd_UOy3vHixPOXoDWwcXWVgWEN-_UOa_JY4fAQpCaaTzo_PQ5_J-sauAbxK77rNZHqBtITtSBGNhap9NIAhM",
+      ],
+      user_id: "mock-user",
+      created_at: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(),
+      status: "active",
+    },
+  };
+
+  const MOCK_CREATORS: Record<string, PostCreator> = {
+    "mock-user": {
+      id: "mock-user",
+      full_name: "Alex Johnson",
+      year: "3rd Year",
+      rating: 4.8,
+      endorsements: 12,
+      avatar_url:
+        "https://api.dicebear.com/7.x/avataaars/svg?seed=alex@example.com",
+      verified: true,
+    },
+  };
+
   useEffect(() => {
     const fetchOpportunityAndCreator = async () => {
       try {
@@ -51,28 +100,45 @@ export default function OpportunityDetails() {
         } = await supabase.auth.getUser();
         setCurrentUser(user);
 
-        // Fetch opportunity
+        // Try to fetch from database
         const { data: oppData, error: oppError } = await supabase
           .from("opportunities")
           .select("*")
           .eq("id", id)
-          .single();
+          .single()
+          .catch(() => ({ data: null, error: "DB not setup" }));
 
-        if (oppError) throw oppError;
-        setOpportunity(oppData);
+        if (oppError || !oppData) {
+          // Fallback to mock data for development
+          console.log("Using mock data for opportunity:", id);
+          const mockOpp = MOCK_OPPORTUNITIES[id];
+          if (mockOpp) {
+            setOpportunity(mockOpp);
+            const mockCreator = MOCK_CREATORS[mockOpp.user_id];
+            if (mockCreator) {
+              setCreator(mockCreator);
+            }
+          } else {
+            throw new Error(`Opportunity with ID ${id} not found`);
+          }
+        } else {
+          setOpportunity(oppData);
 
-        // Fetch creator profile
-        const { data: profileData, error: profileError } = await supabase
-          .from("user_profiles")
-          .select("*")
-          .eq("user_id", oppData.user_id)
-          .single();
+          // Fetch creator profile
+          const { data: profileData, error: profileError } = await supabase
+            .from("user_profiles")
+            .select("*")
+            .eq("user_id", oppData.user_id)
+            .single()
+            .catch(() => ({ data: null, error: "Profile not found" }));
 
-        if (!profileError && profileData) {
-          setCreator(profileData);
+          if (!profileError && profileData) {
+            setCreator(profileData);
+          }
         }
-      } catch (err) {
-        console.error("Error fetching opportunity:", err);
+      } catch (err: any) {
+        console.error("Error fetching opportunity:", err?.message || err);
+        // Continue with loading state set to false
       } finally {
         setLoading(false);
       }

@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "seed:db": "npx tsx scripts/seed-db.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.0.11",
