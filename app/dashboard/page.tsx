@@ -189,180 +189,179 @@ export default function Dashboard() {
         {/* Cards Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {OPPORTUNITIES.map((opp) => (
-            <article
-              key={opp.id}
-              className="flex flex-col rounded-2xl bg-surface-light dark:bg-surface-dark shadow-[0_2px_8px_rgba(0,0,0,0.08)] overflow-hidden hover:shadow-lg transition-shadow"
-            >
-              {opp.imageSmall ? (
-                // Small image layout (study group)
-                <div className="flex p-4 gap-4">
-                  <div
-                    className="h-24 w-24 shrink-0 rounded-xl bg-cover bg-center"
-                    style={{ backgroundImage: `url('${opp.image}')` }}
-                  ></div>
-                  <div className="flex flex-col flex-1 justify-between">
-                    <div>
+            <Link key={opp.id} href={`/opportunities/${opp.id}`}>
+              <article className="flex flex-col rounded-2xl bg-surface-light dark:bg-surface-dark shadow-[0_2px_8px_rgba(0,0,0,0.08)] overflow-hidden hover:shadow-lg transition-shadow cursor-pointer">
+                {opp.imageSmall ? (
+                  // Small image layout (study group)
+                  <div className="flex p-4 gap-4">
+                    <div
+                      className="h-24 w-24 shrink-0 rounded-xl bg-cover bg-center"
+                      style={{ backgroundImage: `url('${opp.image}')` }}
+                    ></div>
+                    <div className="flex flex-col flex-1 justify-between">
+                      <div>
+                        <div className="flex justify-between items-start">
+                          <h3 className="text-slate-900 dark:text-white text-base font-bold leading-tight line-clamp-2">
+                            {opp.title}
+                          </h3>
+                        </div>
+                        <p className="text-text-secondary-light dark:text-text-secondary-dark text-xs mt-1">
+                          {opp.organization} • {opp.location}
+                        </p>
+                      </div>
+                      <div className="flex items-center justify-between mt-2">
+                        <span className="text-xs font-semibold bg-blue-500/10 text-blue-500 px-2 py-0.5 rounded">
+                          {opp.tags[0]?.replace("#", "")}
+                        </span>
+                        <button className="text-primary text-sm font-bold hover:underline">
+                          View Details
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ) : opp.isEventCard ? (
+                  // Event card layout
+                  <>
+                    <div
+                      className="h-40 w-full bg-cover bg-center relative"
+                      style={{ backgroundImage: `url('${opp.image}')` }}
+                    >
+                      <div className="absolute top-3 right-3 bg-primary text-white px-2 py-1 rounded text-xs font-bold uppercase tracking-wider">
+                        Event
+                      </div>
+                    </div>
+                    <div className="p-4 flex flex-col gap-3">
                       <div className="flex justify-between items-start">
-                        <h3 className="text-slate-900 dark:text-white text-base font-bold leading-tight line-clamp-2">
-                          {opp.title}
-                        </h3>
+                        <div>
+                          <h3 className="text-slate-900 dark:text-white text-lg font-bold leading-tight">
+                            {opp.title}
+                          </h3>
+                          <p className="text-text-secondary-light dark:text-text-secondary-dark font-medium text-sm mt-1">
+                            {opp.organization}
+                          </p>
+                        </div>
+                        <div className="flex flex-col items-center justify-center bg-gray-100 dark:bg-white/10 rounded-lg p-1 min-w-[50px]">
+                          <span className="text-xs font-bold text-slate-500 dark:text-gray-300 uppercase">
+                            {opp.date?.split(" ")[0]}
+                          </span>
+                          <span className="text-lg font-bold text-slate-900 dark:text-white leading-none">
+                            {opp.date?.split(" ")[1]}
+                          </span>
+                        </div>
                       </div>
-                      <p className="text-text-secondary-light dark:text-text-secondary-dark text-xs mt-1">
-                        {opp.organization} • {opp.location}
-                      </p>
-                    </div>
-                    <div className="flex items-center justify-between mt-2">
-                      <span className="text-xs font-semibold bg-blue-500/10 text-blue-500 px-2 py-0.5 rounded">
-                        {opp.tags[0]?.replace("#", "")}
-                      </span>
-                      <button className="text-primary text-sm font-bold hover:underline">
-                        View Details
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              ) : opp.isEventCard ? (
-                // Event card layout
-                <>
-                  <div
-                    className="h-40 w-full bg-cover bg-center relative"
-                    style={{ backgroundImage: `url('${opp.image}')` }}
-                  >
-                    <div className="absolute top-3 right-3 bg-primary text-white px-2 py-1 rounded text-xs font-bold uppercase tracking-wider">
-                      Event
-                    </div>
-                  </div>
-                  <div className="p-4 flex flex-col gap-3">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <h3 className="text-slate-900 dark:text-white text-lg font-bold leading-tight">
-                          {opp.title}
-                        </h3>
-                        <p className="text-text-secondary-light dark:text-text-secondary-dark font-medium text-sm mt-1">
-                          {opp.organization}
-                        </p>
-                      </div>
-                      <div className="flex flex-col items-center justify-center bg-gray-100 dark:bg-white/10 rounded-lg p-1 min-w-[50px]">
-                        <span className="text-xs font-bold text-slate-500 dark:text-gray-300 uppercase">
-                          {opp.date?.split(" ")[0]}
+                      <div className="flex items-center gap-2 text-sm text-slate-700 dark:text-gray-300">
+                        <span className="material-symbols-outlined text-[18px] text-primary">
+                          location_on
                         </span>
-                        <span className="text-lg font-bold text-slate-900 dark:text-white leading-none">
-                          {opp.date?.split(" ")[1]}
+                        <span>{opp.location}</span>
+                      </div>
+                      <div className="flex items-center gap-4 text-xs text-text-secondary-light dark:text-text-secondary-dark font-medium border-t border-gray-100 dark:border-white/5 pt-3 mt-1">
+                        <span className="flex items-center gap-1">
+                          <span className="material-symbols-outlined text-[16px]">
+                            schedule
+                          </span>
+                          {opp.timeAgo}
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <span className="material-symbols-outlined text-[16px]">
+                            bolt
+                          </span>
+                          {opp.going}+ Going
                         </span>
                       </div>
-                    </div>
-                    <div className="flex items-center gap-2 text-sm text-slate-700 dark:text-gray-300">
-                      <span className="material-symbols-outlined text-[18px] text-primary">
-                        location_on
-                      </span>
-                      <span>{opp.location}</span>
-                    </div>
-                    <div className="flex items-center gap-4 text-xs text-text-secondary-light dark:text-text-secondary-dark font-medium border-t border-gray-100 dark:border-white/5 pt-3 mt-1">
-                      <span className="flex items-center gap-1">
-                        <span className="material-symbols-outlined text-[16px]">
-                          schedule
-                        </span>
-                        {opp.timeAgo}
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <span className="material-symbols-outlined text-[16px]">
-                          bolt
-                        </span>
-                        {opp.going}+ Going
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-3 mt-1">
-                      <button className="flex-1 bg-slate-900 dark:bg-white text-white dark:text-background-dark font-bold py-2.5 px-4 rounded-lg text-sm hover:opacity-90 transition-opacity">
-                        Register
-                      </button>
-                      <button className="p-2.5 rounded-lg border border-gray-200 dark:border-white/10 text-slate-500 dark:text-white hover:bg-gray-50 dark:hover:bg-white/5">
-                        <span className="material-symbols-outlined text-[20px]">
-                          bookmark
-                        </span>
-                      </button>
-                    </div>
-                  </div>
-                </>
-              ) : (
-                // Job card layout
-                <>
-                  <div
-                    className="h-40 w-full bg-cover bg-center relative"
-                    style={{ backgroundImage: `url('${opp.image}')` }}
-                  >
-                    <div className="absolute top-3 right-3 bg-black/60 backdrop-blur-sm px-2 py-1 rounded text-xs font-bold text-white uppercase tracking-wider">
-                      {opp.type}
-                    </div>
-                  </div>
-                  <div className="p-4 flex flex-col gap-3">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <h3 className="text-slate-900 dark:text-white text-lg font-bold leading-tight">
-                          {opp.title}
-                        </h3>
-                        <p className="text-primary font-medium text-sm mt-1">
-                          {opp.company}
-                        </p>
-                      </div>
-                      <div className="h-10 w-10 rounded-full bg-gray-100 dark:bg-white/10 flex items-center justify-center overflow-hidden">
-                        <span className="material-symbols-outlined text-gray-400">
-                          business
-                        </span>
+                      <div className="flex items-center gap-3 mt-1">
+                        <button className="flex-1 bg-slate-900 dark:bg-white text-white dark:text-background-dark font-bold py-2.5 px-4 rounded-lg text-sm hover:opacity-90 transition-opacity">
+                          Register
+                        </button>
+                        <button className="p-2.5 rounded-lg border border-gray-200 dark:border-white/10 text-slate-500 dark:text-white hover:bg-gray-50 dark:hover:bg-white/5">
+                          <span className="material-symbols-outlined text-[20px]">
+                            bookmark
+                          </span>
+                        </button>
                       </div>
                     </div>
-                    <div className="flex flex-wrap gap-2 my-1">
-                      {opp.tags.map((tag) => (
-                        <span
-                          key={tag}
-                          className={`px-2 py-1 rounded text-xs font-semibold ${
-                            tag.includes("Design")
-                              ? "bg-primary/10 text-primary"
-                              : "bg-slate-100 dark:bg-white/10 text-slate-600 dark:text-slate-300"
-                          }`}
-                        >
-                          {tag}
-                        </span>
-                      ))}
+                  </>
+                ) : (
+                  // Job card layout
+                  <>
+                    <div
+                      className="h-40 w-full bg-cover bg-center relative"
+                      style={{ backgroundImage: `url('${opp.image}')` }}
+                    >
+                      <div className="absolute top-3 right-3 bg-black/60 backdrop-blur-sm px-2 py-1 rounded text-xs font-bold text-white uppercase tracking-wider">
+                        {opp.type}
+                      </div>
                     </div>
-                    <div className="flex items-center gap-4 text-xs text-text-secondary-light dark:text-text-secondary-dark font-medium border-t border-gray-100 dark:border-white/5 pt-3 mt-1">
-                      <span className="flex items-center gap-1">
-                        <span className="material-symbols-outlined text-[16px]">
-                          schedule
+                    <div className="p-4 flex flex-col gap-3">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <h3 className="text-slate-900 dark:text-white text-lg font-bold leading-tight">
+                            {opp.title}
+                          </h3>
+                          <p className="text-primary font-medium text-sm mt-1">
+                            {opp.company}
+                          </p>
+                        </div>
+                        <div className="h-10 w-10 rounded-full bg-gray-100 dark:bg-white/10 flex items-center justify-center overflow-hidden">
+                          <span className="material-symbols-outlined text-gray-400">
+                            business
+                          </span>
+                        </div>
+                      </div>
+                      <div className="flex flex-wrap gap-2 my-1">
+                        {opp.tags.map((tag) => (
+                          <span
+                            key={tag}
+                            className={`px-2 py-1 rounded text-xs font-semibold ${
+                              tag.includes("Design")
+                                ? "bg-primary/10 text-primary"
+                                : "bg-slate-100 dark:bg-white/10 text-slate-600 dark:text-slate-300"
+                            }`}
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                      <div className="flex items-center gap-4 text-xs text-text-secondary-light dark:text-text-secondary-dark font-medium border-t border-gray-100 dark:border-white/5 pt-3 mt-1">
+                        <span className="flex items-center gap-1">
+                          <span className="material-symbols-outlined text-[16px]">
+                            schedule
+                          </span>
+                          {opp.timeAgo}
                         </span>
-                        {opp.timeAgo}
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <span className="material-symbols-outlined text-[16px]">
-                          group
+                        <span className="flex items-center gap-1">
+                          <span className="material-symbols-outlined text-[16px]">
+                            group
+                          </span>
+                          {opp.applicants} Applicants
                         </span>
-                        {opp.applicants} Applicants
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <span className="material-symbols-outlined text-[16px]">
-                          public
+                        <span className="flex items-center gap-1">
+                          <span className="material-symbols-outlined text-[16px]">
+                            public
+                          </span>
+                          {opp.location}
                         </span>
-                        {opp.location}
-                      </span>
+                      </div>
+                      <div className="flex items-center gap-3 mt-1">
+                        <button className="flex-1 bg-primary text-white font-bold py-2.5 px-4 rounded-lg text-sm hover:bg-primary/90 transition-colors">
+                          Apply Now
+                        </button>
+                        <button className="p-2.5 rounded-lg border border-gray-200 dark:border-white/10 text-slate-500 dark:text-white hover:bg-gray-50 dark:hover:bg-white/5">
+                          <span className="material-symbols-outlined text-[20px]">
+                            bookmark
+                          </span>
+                        </button>
+                        <button className="p-2.5 rounded-lg border border-gray-200 dark:border-white/10 text-slate-500 dark:text-white hover:bg-gray-50 dark:hover:bg-white/5">
+                          <span className="material-symbols-outlined text-[20px]">
+                            share
+                          </span>
+                        </button>
+                      </div>
                     </div>
-                    <div className="flex items-center gap-3 mt-1">
-                      <button className="flex-1 bg-primary text-white font-bold py-2.5 px-4 rounded-lg text-sm hover:bg-primary/90 transition-colors">
-                        Apply Now
-                      </button>
-                      <button className="p-2.5 rounded-lg border border-gray-200 dark:border-white/10 text-slate-500 dark:text-white hover:bg-gray-50 dark:hover:bg-white/5">
-                        <span className="material-symbols-outlined text-[20px]">
-                          bookmark
-                        </span>
-                      </button>
-                      <button className="p-2.5 rounded-lg border border-gray-200 dark:border-white/10 text-slate-500 dark:text-white hover:bg-gray-50 dark:hover:bg-white/5">
-                        <span className="material-symbols-outlined text-[20px]">
-                          share
-                        </span>
-                      </button>
-                    </div>
-                  </div>
-                </>
-              )}
-            </article>
+                  </>
+                )}
+              </article>
+            </Link>
           ))}
         </div>
       </main>
