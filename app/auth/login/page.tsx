@@ -1,17 +1,17 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { createClient } from '@/lib/supabase/client';
+import { useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
 
 export default function Login() {
   const [formData, setFormData] = useState({
-    email: '',
-    password: '',
+    email: "",
+    password: "",
   });
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const router = useRouter();
   const supabase = createClient();
 
@@ -25,7 +25,7 @@ export default function Login() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    setError("");
     setLoading(true);
 
     try {
@@ -36,9 +36,9 @@ export default function Login() {
 
       if (error) throw error;
 
-      router.push('/dashboard');
+      router.push("/dashboard");
     } catch (err: any) {
-      setError(err.message || 'An error occurred during login');
+      setError(err.message || "An error occurred during login");
     } finally {
       setLoading(false);
     }
@@ -59,7 +59,10 @@ export default function Login() {
 
       {/* Header */}
       <div className="relative z-10 w-full pt-8 px-6 flex justify-between items-center lg:px-12">
-        <Link href="/" className="flex items-center gap-2 bg-black/40 backdrop-blur-md px-4 py-2 rounded-full border border-white/20 shadow-lg hover:bg-black/50 transition-colors">
+        <Link
+          href="/"
+          className="flex items-center gap-2 bg-black/40 backdrop-blur-md px-4 py-2 rounded-full border border-white/20 shadow-lg hover:bg-black/50 transition-colors"
+        >
           <span className="material-symbols-outlined text-white text-2xl">
             school
           </span>
@@ -67,7 +70,10 @@ export default function Login() {
             CampusConnect
           </span>
         </Link>
-        <Link href="/auth/signup" className="text-primary font-semibold hover:text-blue-400 transition-colors text-sm lg:text-base">
+        <Link
+          href="/auth/signup"
+          className="text-primary font-semibold hover:text-blue-400 transition-colors text-sm lg:text-base"
+        >
           Don't have an account? Sign Up
         </Link>
       </div>
@@ -124,7 +130,10 @@ export default function Login() {
                 <input type="checkbox" className="w-4 h-4 rounded" />
                 Remember me
               </label>
-              <Link href="/auth/forgot-password" className="text-primary hover:text-blue-400">
+              <Link
+                href="/auth/forgot-password"
+                className="text-primary hover:text-blue-400"
+              >
                 Forgot Password?
               </Link>
             </div>
@@ -134,13 +143,16 @@ export default function Login() {
               disabled={loading}
               className="w-full h-12 bg-primary hover:bg-blue-500 text-white font-bold rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_0_20px_rgba(37,99,235,0.3)]"
             >
-              {loading ? 'Logging In...' : 'Log In'}
+              {loading ? "Logging In..." : "Log In"}
             </button>
           </form>
 
           <p className="text-center text-gray-400 text-sm mt-6">
-            Don't have an account?{' '}
-            <Link href="/auth/signup" className="text-primary font-semibold hover:text-blue-400">
+            Don't have an account?{" "}
+            <Link
+              href="/auth/signup"
+              className="text-primary font-semibold hover:text-blue-400"
+            >
               Create one
             </Link>
           </p>
