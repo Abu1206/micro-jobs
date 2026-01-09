@@ -34,7 +34,13 @@ const MOCK_PROFILE = {
     "https://lh3.googleusercontent.com/aida-public/AB6AXuC5v9C51_AaWA88mg_E4cpJ6mhfDSmyoxvqk5FyQlsMY-I_Tnq_R58c9e0a5LqT8JlmjNqEFo5AHBb5JXiSFi-L8eDYRL-VlynU-mjUSs46cqWCj0AEgCzKXLH9Xh735HvB0oUXdi27Sxm4-4-0COYvbnZYzceyoI-oT5-hAYWRYte2BI66SJm3X_ecdhel-T8oI9i3y6g-L-oKqDd-1stYSGw_S0AYnWBofLmfF2caiCky0rkAOdlp0_CzjQGk829zsd6GS9gcDXg2",
   about:
     "Junior developer passionate about open source and community building. Always looking for new hackathons and collaborative projects to sharpen my skills in React and Swift.",
-  skills: ["Python", "Public Speaking", "Event Planning", "UX Design", "SwiftUI"],
+  skills: [
+    "Python",
+    "Public Speaking",
+    "Event Planning",
+    "UX Design",
+    "SwiftUI",
+  ],
   github_url: "https://github.com/alexrivera_dev",
   behance_url: "https://behance.net/alexrivera",
   rating: 4.8,
@@ -153,7 +159,9 @@ export default function PublicProfile() {
     return (
       <div className="min-h-screen bg-background-light dark:bg-background-dark flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-white text-2xl font-bold mb-4">Profile not found</h1>
+          <h1 className="text-white text-2xl font-bold mb-4">
+            Profile not found
+          </h1>
           <Link href="/dashboard">
             <button className="px-6 py-3 bg-primary text-white rounded-lg font-semibold">
               Back to Dashboard

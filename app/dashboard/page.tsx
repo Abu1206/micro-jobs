@@ -437,7 +437,35 @@ export default function Dashboard() {
           </span>
         </div>
 
+        {/* Navigation Tabs */}
         <div className="flex-1 space-y-2">
+          <Link href="/dashboard">
+            <button className="w-full text-left px-4 py-3 rounded-lg bg-primary/10 border border-primary/20 text-primary hover:bg-primary/20 transition-colors font-semibold text-sm flex items-center gap-2">
+              <span className="material-symbols-outlined">home</span>
+              Dashboard
+            </button>
+          </Link>
+          <Link href="/guest">
+            <button className="w-full text-left px-4 py-3 rounded-lg text-slate-600 dark:text-white hover:bg-gray-100 dark:hover:bg-white/10 transition-colors font-semibold text-sm flex items-center gap-2">
+              <span className="material-symbols-outlined">explore</span>
+              Explore
+            </button>
+          </Link>
+          <Link href="/messages">
+            <button className="w-full text-left px-4 py-3 rounded-lg text-slate-600 dark:text-white hover:bg-gray-100 dark:hover:bg-white/10 transition-colors font-semibold text-sm flex items-center gap-2">
+              <span className="material-symbols-outlined">chat_bubble</span>
+              Messages
+            </button>
+          </Link>
+          <Link href="/profile/current">
+            <button className="w-full text-left px-4 py-3 rounded-lg text-slate-600 dark:text-white hover:bg-gray-100 dark:hover:bg-white/10 transition-colors font-semibold text-sm flex items-center gap-2">
+              <span className="material-symbols-outlined">person</span>
+              Profile
+            </button>
+          </Link>
+        </div>
+
+        <div className="space-y-2 pb-4 border-b border-gray-200 dark:border-white/10">
           <button
             onClick={async () => {
               await supabase.auth.signOut();
