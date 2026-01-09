@@ -1,27 +1,18 @@
-import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
+import { createClient as createSupabaseClient } from '@supabase/supabase-js';
 
-export async function createClient() {
-  const cookieStore = await cookies();
+export function createClient() {
+  // You can still access cookies if you need them for custom logic
+  const cookieStore = cookies();
 
-  return createServerClient(
+  // Directly create a Supabase client (no SSR helper needed)
+  const supabase = createSupabaseClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        getAll() {
-          return cookieStore.getAll();
-        },
-        setAll(cookiesToSet) {
-          try {
-            cookiesToSet.forEach(({ name, value, options }) =>
-              cookieStore.set(name, value, options)
-            );
-          } catch {
-            // Handle cookie setting errors
-          }
-        },
-      },
-    }
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   );
+
+  // Optionally, you could read/write cookies manually here if needed
+  // e.g., cookieStore.get('access_token') or cookieStore.set('something', 'value')
+
+  return supabase;
 }

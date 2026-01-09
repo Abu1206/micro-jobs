@@ -22,9 +22,7 @@ export default function Home() {
       {/* Header with Logo */}
       <div className="relative z-10 w-full pt-16 px-6 flex justify-center">
         <div className="flex items-center gap-2 bg-black/40 backdrop-blur-md px-4 py-2 rounded-full border border-white/20 shadow-lg">
-          <span className="material-symbols-outlined text-white text-2xl">
-            school
-          </span>
+          <span className="material-symbols-outlined text-white text-2xl">school</span>
           <span className="text-white font-bold tracking-wide text-sm uppercase">
             CampusConnect
           </span>
@@ -33,14 +31,14 @@ export default function Home() {
 
       {/* Main Content */}
       <div className="relative z-10 flex w-full flex-col items-center justify-end flex-1 pb-10 pt-10 px-5 max-w-md mx-auto lg:max-w-2xl">
+        {/* Headline */}
         <div className="w-full flex flex-col items-center text-center mb-8">
           <h1 className="text-white tracking-tight text-[42px] lg:text-6xl font-extrabold leading-[1.1] mb-4 drop-shadow-sm">
             Unlock Your <br />
             <span className="text-primary bg-clip-text">Campus Life</span>
           </h1>
           <p className="text-gray-400 text-base lg:text-lg font-medium leading-relaxed max-w-[320px] lg:max-w-[480px]">
-            The open platform for students to find jobs, events, and community
-            opportunities.
+            The open platform for students to find jobs, events, and community opportunities.
           </p>
         </div>
 
@@ -53,9 +51,7 @@ export default function Home() {
               onMouseLeave={() => setHoveredButton(null)}
             >
               <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-              <span className="material-symbols-outlined text-white mr-3 text-[24px]">
-                badge
-              </span>
+              <span className="material-symbols-outlined text-white mr-3 text-[24px]">badge</span>
               <span className="text-white text-[17px] font-bold tracking-tight">
                 Connect with School ID
               </span>
@@ -64,9 +60,7 @@ export default function Home() {
 
           <Link href="/auth/email">
             <button className="group flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-xl h-[56px] px-5 bg-white text-black border border-gray-200 hover:bg-gray-100 transition-all duration-200 active:scale-[0.98]">
-              <span className="material-symbols-outlined text-black mr-3 text-[24px]">
-                mail
-              </span>
+              <span className="material-symbols-outlined text-black mr-3 text-[24px]">mail</span>
               <span className="text-black text-[17px] font-bold tracking-tight">
                 Continue with Email
               </span>
@@ -91,49 +85,32 @@ export default function Home() {
             </button>
           </Link>
         </div>
-      </div>
+
+        {/* Footer Credits */}
+        <div className="mt-10 text-center text-sm text-gray-500">
+          <p>
+            Explore more{' '}
             <a
               href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+              className="font-medium text-blue-400 hover:underline"
+              target="_blank"
+              rel="noopener noreferrer"
             >
               Templates
-            </a>{" "}
-            or the{" "}
+            </a>{' '}
+            or the{' '}
             <a
               href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+              className="font-medium text-blue-400 hover:underline"
+              target="_blank"
+              rel="noopener noreferrer"
             >
               Learning
-            </a>{" "}
+            </a>{' '}
             center.
           </p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+      </div>
     </div>
   );
 }
