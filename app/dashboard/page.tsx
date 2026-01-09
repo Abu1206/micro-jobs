@@ -395,7 +395,10 @@ export default function Dashboard() {
             </a>
           </li>
           <li>
-            <a className="flex flex-col items-center gap-1 group" href="#">
+            <Link
+              className="flex flex-col items-center gap-1 group"
+              href="/messages"
+            >
               <div className="relative">
                 <span className="material-symbols-outlined text-gray-400 text-[28px] group-hover:text-primary transition-colors">
                   chat_bubble
@@ -405,7 +408,7 @@ export default function Dashboard() {
               <span className="text-[10px] font-medium text-gray-400 group-hover:text-primary transition-colors">
                 Messages
               </span>
-            </a>
+            </Link>
           </li>
           <li>
             <a
