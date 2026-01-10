@@ -26,18 +26,18 @@ export default function Home() {
             school
           </span>
           <span className="text-white font-bold tracking-wide text-sm uppercase">
-            CampusConnect
+           Micra jobs
           </span>
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="relative z-10 flex w-full flex-col items-center justify-end flex-1 pb-10 pt-10 px-5 max-w-md mx-auto lg:max-w-2xl">
+      <div className="relative z-10 flex w-full flex-col items-center justify-center flex-1 pb-10 pt-10 px-5 max-w-md mx-auto lg:max-w-2xl">
         {/* Headline */}
         <div className="w-full flex flex-col items-center text-center mb-8">
           <h1 className="text-white tracking-tight text-[42px] lg:text-6xl font-extrabold leading-[1.1] mb-4 drop-shadow-sm">
-            Unlock Your <br />
-            <span className="text-primary bg-clip-text">Campus Life</span>
+            Unlock more <br />
+            <span className="text-primary bg-clip-text">Campus opportunities</span>
           </h1>
           <p className="text-gray-400 text-base lg:text-lg font-medium leading-relaxed max-w-80 lg:max-w-120">
             The open platform for students to find jobs, events, and community
@@ -69,7 +69,7 @@ export default function Home() {
                 mail
               </span>
               <span className="text-black text-[17px] font-bold tracking-tight">
-                Continue with Email
+                Continue with Google
               </span>
             </button>
           </Link>
@@ -86,36 +86,6 @@ export default function Home() {
               Log In
             </Link>
           </div>
-          <Link href="/guest">
-            <button className="text-xs font-semibold text-gray-500 hover:text-white uppercase tracking-widest transition-colors py-2">
-              Browse as Guest
-            </button>
-          </Link>
-        </div>
-
-        {/* Footer Credits */}
-        <div className="mt-10 text-center text-sm text-gray-500">
-          <p>
-            Explore more{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-blue-400 hover:underline"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-blue-400 hover:underline"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
         </div>
       </div>
     </div>
