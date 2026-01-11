@@ -11,8 +11,7 @@ export default function SignUp() {
     password: "",
     confirmPassword: "",
     fullName: "",
-    schoolId: "",
-  });
+    });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const router = useRouter();
@@ -44,7 +43,6 @@ export default function SignUp() {
         options: {
           data: {
             full_name: formData.fullName,
-            school_id: formData.schoolId,
           },
         },
       });
@@ -82,7 +80,7 @@ export default function SignUp() {
             school
           </span>
           <span className="text-white font-bold tracking-wide text-sm uppercase">
-            CampusConnect
+            Micra jobs
           </span>
         </Link>
         <Link
@@ -100,7 +98,7 @@ export default function SignUp() {
             Create Account
           </h1>
           <p className="text-gray-400 text-sm lg:text-base mb-8">
-            Join CampusConnect to find jobs, events, and opportunities
+            Join Micra jobs to find jobs, events, and opportunities
           </p>
 
           <form onSubmit={handleSubmit} className="space-y-5">
@@ -124,22 +122,6 @@ export default function SignUp() {
                 required
               />
             </div>
-
-            <div>
-              <label className="block text-white text-sm font-semibold mb-2">
-                School ID
-              </label>
-              <input
-                type="text"
-                name="schoolId"
-                value={formData.schoolId}
-                onChange={handleChange}
-                placeholder="Enter your school ID"
-                className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-primary focus:bg-white/10 transition-colors"
-                required
-              />
-            </div>
-
             <div>
               <label className="block text-white text-sm font-semibold mb-2">
                 Email
