@@ -22,10 +22,7 @@ const SKILLS_SUGGESTIONS = [
 
 export default function ProfileSetup() {
   const [step, setStep] = useState(1);
-  const [selectedSkills, setSelectedSkills] = useState([
-    "ProductDesign",
-    "React",
-  ]);
+  const [selectedSkills, setSelectedSkills] = useState(["ProductDesign", "React"]);
   const [skillInput, setSkillInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [authLoading, setAuthLoading] = useState(true);
@@ -40,11 +37,12 @@ export default function ProfileSetup() {
     behance: "",
     linkedin: "",
   });
+
   const fileInputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
-  const supabase = createClient();
+  const supabase = createClient(); // ✅ singleton client
 
-  // Check authentication on mount
+  // --- Check authentication ---
   useEffect(() => {
     const checkAuth = async () => {
       const {
@@ -70,26 +68,17 @@ export default function ProfileSetup() {
     );
   }
 
-  if (!isAuthenticated) {
-    return null;
-  }
+  if (!isAuthenticated) return null;
 
+  // --- Input Handlers ---
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      setFormData((prev) => ({
-        ...prev,
-        profilePhoto: file,
-      }));
-    }
+    if (file) setFormData((prev) => ({ ...prev, profilePhoto: file }));
   };
 
   const toggleSkill = (skill: string) => {
@@ -105,6 +94,7 @@ export default function ProfileSetup() {
     }
   };
 
+  // --- Form Submit ---
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -121,9 +111,8 @@ export default function ProfileSetup() {
         return;
       }
 
-      // --- Upload profile photo if provided ---
-      let profilePhotoUrl = null;
-
+      // --- Upload profile photo ---
+      let avatarUrl: string | null = null;
       if (formData.profilePhoto) {
         const fileExt = formData.profilePhoto.name.split(".").pop();
         const fileName = `${user.id}-${Date.now()}.${fileExt}`;
@@ -131,22 +120,15 @@ export default function ProfileSetup() {
 
         const { error: uploadError } = await supabase.storage
           .from("profile-photos")
-          .upload(filePath, formData.profilePhoto, {
-            cacheControl: "3600",
-            upsert: true,
-          });
+          .upload(filePath, formData.profilePhoto, { cacheControl: "3600", upsert: true });
 
         if (uploadError) throw uploadError;
 
-        // ✅ Correct way to get the public URL
-        const { data: publicUrlData } = supabase.storage
-          .from("profile-photos")
-          .getPublicUrl(filePath);
-
-        profilePhotoUrl = publicUrlData.publicUrl;
+        const { data: publicUrlData } = supabase.storage.from("profile-photos").getPublicUrl(filePath);
+        avatarUrl = publicUrlData.publicUrl;
       }
 
-      // --- Insert or upsert profile into user_profiles table ---
+      // --- Upsert profile ---
       const { error: upsertError } = await supabase
         .from("user_profiles")
         .upsert(
@@ -156,7 +138,7 @@ export default function ProfileSetup() {
             headline: formData.headline,
             university: formData.university,
             major: formData.major,
-            profile_photo_url: profilePhotoUrl,
+            avatar_url: avatarUrl,
             skills: selectedSkills,
             github_url: formData.github,
             behance_url: formData.behance,
@@ -166,23 +148,19 @@ export default function ProfileSetup() {
             endorsements: 0,
             updated_at: new Date().toISOString(),
           },
-          { onConflict: "user_id" } // 👈 prevents duplicate profiles
+          { onConflict: "user_id" }
         );
 
       if (upsertError) throw upsertError;
 
-      // --- Optional: update user metadata for reference ---
+      // --- Update user metadata ---
       const { error: metaError } = await supabase.auth.updateUser({
         data: {
           full_name: formData.fullName,
           headline: formData.headline,
           university: formData.university,
           major: formData.major,
-          profile_photo_url: profilePhotoUrl,
-          skills: selectedSkills,
-          github_url: formData.github,
-          behance_url: formData.behance,
-          linkedin_url: formData.linkedin,
+          avatar_url: avatarUrl,
         },
       });
 
@@ -195,6 +173,7 @@ export default function ProfileSetup() {
       setLoading(false);
     }
   };
+
 
   return (
     <div className="relative flex h-full min-h-screen w-full flex-col overflow-x-hidden bg-background-light dark:bg-background-dark">
