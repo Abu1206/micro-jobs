@@ -112,50 +112,85 @@ export default function ProfileSetup() {
     try {
       const {
         data: { user },
+        error: userError,
       } = await supabase.auth.getUser();
 
+      if (userError) throw userError;
       if (!user) {
         router.push("/auth/login");
         return;
       }
 
-      // Update user metadata with profile info
-      const { error } = await supabase.auth.updateUser({
+      // --- Upload profile photo if provided ---
+      let profilePhotoUrl = null;
+
+      if (formData.profilePhoto) {
+        const fileExt = formData.profilePhoto.name.split(".").pop();
+        const fileName = `${user.id}-${Date.now()}.${fileExt}`;
+        const filePath = `${user.id}/${fileName}`;
+
+        const { error: uploadError } = await supabase.storage
+          .from("profile-photos")
+          .upload(filePath, formData.profilePhoto, {
+            cacheControl: "3600",
+            upsert: true,
+          });
+
+        if (uploadError) throw uploadError;
+
+        // ✅ Correct way to get the public URL
+        const { data: publicUrlData } = supabase.storage
+          .from("profile-photos")
+          .getPublicUrl(filePath);
+
+        profilePhotoUrl = publicUrlData.publicUrl;
+      }
+
+      // --- Insert or upsert profile into user_profiles table ---
+      const { error: upsertError } = await supabase
+        .from("user_profiles")
+        .upsert(
+          {
+            user_id: user.id,
+            full_name: formData.fullName,
+            headline: formData.headline,
+            university: formData.university,
+            major: formData.major,
+            profile_photo_url: profilePhotoUrl,
+            skills: selectedSkills,
+            github_url: formData.github,
+            behance_url: formData.behance,
+            linkedin_url: formData.linkedin,
+            verified: false,
+            rating: 0,
+            endorsements: 0,
+            updated_at: new Date().toISOString(),
+          },
+          { onConflict: "user_id" } // 👈 prevents duplicate profiles
+        );
+
+      if (upsertError) throw upsertError;
+
+      // --- Optional: update user metadata for reference ---
+      const { error: metaError } = await supabase.auth.updateUser({
         data: {
           full_name: formData.fullName,
           headline: formData.headline,
           university: formData.university,
           major: formData.major,
+          profile_photo_url: profilePhotoUrl,
           skills: selectedSkills,
-          github: formData.github,
-          behance: formData.behance,
-          linkedin: formData.linkedin,
+          github_url: formData.github,
+          behance_url: formData.behance,
+          linkedin_url: formData.linkedin,
         },
       });
 
-      if (error) throw error;
-
-      // Upload profile photo if provided
-      if (formData.profilePhoto) {
-        const fileName = `${user.id}-${Date.now()}`;
-        const { error: uploadError } = await supabase.storage
-          .from("profile-photos")
-          .upload(fileName, formData.profilePhoto);
-
-        if (!uploadError) {
-          const { data } = supabase.storage
-            .from("profile-photos")
-            .getPublicUrl(fileName);
-
-          await supabase.auth.updateUser({
-            data: { profile_photo_url: data.publicUrl },
-          });
-        }
-      }
+      if (metaError) throw metaError;
 
       router.push("/dashboard");
     } catch (err: any) {
-      console.error("Error updating profile:", err.message);
+      console.error("❌ Error saving profile:", err.message);
     } finally {
       setLoading(false);
     }
@@ -224,7 +259,7 @@ export default function ProfileSetup() {
         </div>
 
         {/* Right Panel - Form */}
-        <div className="w-1/2 flex flex-col p-12 overflow-y-auto">
+        <div className="w-1/2 flex flex-col p-28 overflow-y-auto">
           <div className="mb-8">
             <h2 className="text-3xl font-bold text-white mb-2">
               Create Profile
@@ -242,6 +277,39 @@ export default function ProfileSetup() {
           </div>
 
           <form onSubmit={handleSubmit} className="flex-1 space-y-8">
+            {/* Profile Photo Upload Section */}
+            <section className="flex flex-col items-center space-y-3">
+              <div className="relative group cursor-pointer">
+                <div
+                  className="h-32 w-32 rounded-full bg-surface-dark border-4 border-slate-700 overflow-hidden bg-cover bg-center"
+                  style={{
+                    backgroundImage: formData.profilePhoto
+                      ? `url(${URL.createObjectURL(formData.profilePhoto)})`
+                      : `url('/default-avatar.png')`, // fallback image
+                  }}
+                  onClick={() => fileInputRef.current?.click()}
+                ></div>
+
+                <div className="absolute bottom-1 right-1 h-9 w-9 bg-primary rounded-full flex items-center justify-center border-2 border-background-dark shadow-md">
+                  <span className="material-symbols-outlined text-white text-[20px]">
+                    edit
+                  </span>
+                </div>
+
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handlePhotoChange}
+                  className="hidden"
+                />
+              </div>
+
+              <p className="text-sm text-slate-400 text-center">
+                Click the image to upload your profile photo
+              </p>
+            </section>
+
             {/* Personal Details Section */}
             <section className="space-y-4">
               <div>
