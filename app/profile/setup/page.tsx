@@ -177,8 +177,25 @@ export default function ProfileSetup() {
 
   return (
     <div className="relative flex h-full min-h-screen w-full flex-col overflow-x-hidden bg-background-light dark:bg-background-dark">
+      {/* Header */}
+      <header className="sticky top-0 z-50 flex items-center justify-between px-6 py-4 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-sm border-b border-gray-200 dark:border-white/10">
+        <Link href="/" className="flex items-center gap-2">
+          <span className="material-symbols-outlined text-primary text-2xl">
+            school
+          </span>
+          <span className="text-lg font-bold text-slate-900 dark:text-white">
+            Micra Jobs
+          </span>
+        </Link>
+        <Link href="/dashboard">
+          <button className="px-4 py-2 text-slate-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/10 rounded-lg transition-colors">
+            Skip for Now
+          </button>
+        </Link>
+      </header>
+
       {/* Desktop Layout */}
-      <div className="hidden lg:flex h-screen">
+      <div className="hidden lg:flex h-full"
         {/* Left Panel - Info */}
         <div className="w-1/2 bg-linear-to-br from-primary/20 to-background-dark flex flex-col items-center justify-center p-12">
           <div className="max-w-md text-center">

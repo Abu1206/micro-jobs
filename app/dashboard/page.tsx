@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
 interface Opportunity {
@@ -23,6 +24,8 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [opportunities, setOpportunities] = useState<Opportunity[]>([]);
   const [selectedFilter, setSelectedFilter] = useState("All");
+  const [menuOpen, setMenuOpen] = useState(false);
+  const router = useRouter();
   const supabase = createClient();
 
   useEffect(() => {
@@ -52,6 +55,11 @@ export default function Dashboard() {
 
     getUser();
   }, []);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    router.push("/");
+  };
 
   if (loading) {
     return (
@@ -86,15 +94,56 @@ export default function Dashboard() {
       {/* Header */}
       <header className="sticky top-0 z-30 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-md border-b border-gray-200 dark:border-white/5 pb-2">
         <div className="flex items-center justify-between px-4 pt-4 pb-2 max-w-7xl mx-auto">
-          <h1 className="text-slate-900 dark:text-white text-xl font-extrabold tracking-tight">
-            CampusConnect
-          </h1>
-          <button className="flex items-center justify-center w-10 h-10 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors relative">
-            <span className="material-symbols-outlined text-slate-900 dark:text-white">
-              notifications
+          <Link href="/dashboard" className="flex items-center gap-2">
+            <span className="material-symbols-outlined text-primary text-2xl">
+              school
             </span>
-            <span className="absolute top-2 right-2 w-2.5 h-2.5 bg-primary rounded-full border-2 border-background-light dark:border-background-dark"></span>
-          </button>
+            <h1 className="text-slate-900 dark:text-white text-xl font-extrabold tracking-tight">
+              Micra Jobs
+            </h1>
+          </Link>
+          <div className="flex items-center gap-4">
+            <Link href="/create-opportunity">
+              <button className="hidden md:flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-blue-600 transition-colors font-medium">
+                <span className="material-symbols-outlined">add</span>
+                Post Opportunity
+              </button>
+            </Link>
+            <Link href="/messages">
+              <button className="flex items-center justify-center w-10 h-10 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors relative">
+                <span className="material-symbols-outlined text-slate-900 dark:text-white">
+                  mail
+                </span>
+                <span className="absolute top-2 right-2 w-2.5 h-2.5 bg-primary rounded-full border-2 border-background-light dark:border-background-dark"></span>
+              </button>
+            </Link>
+            <div className="relative">
+              <button
+                onClick={() => setMenuOpen(!menuOpen)}
+                className="flex items-center justify-center w-10 h-10 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
+              >
+                <span className="material-symbols-outlined text-slate-900 dark:text-white">
+                  account_circle
+                </span>
+              </button>
+              {menuOpen && (
+                <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-surface-dark rounded-lg shadow-xl border border-gray-200 dark:border-white/10 z-50">
+                  <Link
+                    href="/profile/setup"
+                    className="block px-4 py-2 text-slate-900 dark:text-white hover:bg-gray-100 dark:hover:bg-white/10 rounded-t-lg transition-colors"
+                  >
+                    Edit Profile
+                  </Link>
+                  <button
+                    onClick={handleLogout}
+                    className="w-full text-left px-4 py-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-b-lg transition-colors"
+                  >
+                    Logout
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
 
         {/* Search Bar */}
@@ -131,7 +180,7 @@ export default function Dashboard() {
               >
                 {filter}
               </button>
-            )
+            ),
           )}
         </div>
       </header>

@@ -11,7 +11,7 @@ export default function SignUp() {
     password: "",
     confirmPassword: "",
     fullName: "",
-    });
+  });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const router = useRouter();
@@ -80,7 +80,7 @@ export default function SignUp() {
             school
           </span>
           <span className="text-white font-bold tracking-wide text-sm uppercase">
-            Micra jobs
+            Micra Jobs
           </span>
         </Link>
         <Link

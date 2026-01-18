@@ -26,7 +26,7 @@ export default function Home() {
             school
           </span>
           <span className="text-white font-bold tracking-wide text-sm uppercase">
-           Micra jobs
+            Micra jobs
           </span>
         </div>
       </div>
@@ -37,7 +37,9 @@ export default function Home() {
         <div className="w-full flex flex-col items-center text-center mb-8">
           <h1 className="text-white tracking-tight text-[42px] lg:text-6xl font-extrabold leading-[1.1] mb-4 drop-shadow-sm">
             Unlock more <br />
-            <span className="text-primary bg-clip-text">Campus opportunities</span>
+            <span className="text-primary bg-clip-text">
+              Campus opportunities
+            </span>
           </h1>
           <p className="text-gray-400 text-base lg:text-lg font-medium leading-relaxed max-w-80 lg:max-w-120">
             The open platform for students to find jobs, events, and community
@@ -55,21 +57,32 @@ export default function Home() {
             >
               <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
               <span className="material-symbols-outlined text-white mr-3 text-[24px]">
-                badge
+                person_add
               </span>
               <span className="text-white text-[17px] font-bold tracking-tight">
-                Connect with School ID
+                Create Account
               </span>
             </button>
           </Link>
 
-          <Link href="/auth/email">
+          <Link href="/auth/login">
             <button className="group flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-xl h-14 px-5 bg-white text-black border border-gray-200 hover:bg-gray-100 transition-all duration-200 active:scale-[0.98]">
               <span className="material-symbols-outlined text-black mr-3 text-[24px]">
-                mail
+                login
               </span>
               <span className="text-black text-[17px] font-bold tracking-tight">
-                Continue with Google
+                Log In
+              </span>
+            </button>
+          </Link>
+
+          <Link href="/guest">
+            <button className="group flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-xl h-14 px-5 bg-gray-800 text-white border border-gray-700 hover:bg-gray-700 transition-all duration-200 active:scale-[0.98]">
+              <span className="material-symbols-outlined text-white mr-3 text-[24px]">
+                explore
+              </span>
+              <span className="text-white text-[17px] font-bold tracking-tight">
+                Browse as Guest
               </span>
             </button>
           </Link>
@@ -77,15 +90,9 @@ export default function Home() {
 
         {/* Footer Links */}
         <div className="flex flex-col items-center gap-5 w-full">
-          <div className="flex items-center gap-1.5 text-sm text-gray-400">
-            <span>Already have an account?</span>
-            <Link
-              href="/auth/login"
-              className="text-primary font-bold hover:text-blue-400 transition-colors"
-            >
-              Log In
-            </Link>
-          </div>
+          <p className="text-gray-400 text-sm">
+            Join thousands of students finding opportunities
+          </p>
         </div>
       </div>
     </div>

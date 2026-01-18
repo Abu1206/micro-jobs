@@ -15,7 +15,7 @@ const notoSans = Noto_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "CampusConnect - Unlock Your Campus Life",
+  title: "Micra Jobs - Find Campus Opportunities",
   description:
     "The open platform for students to find jobs, events, and community opportunities.",
 };
@@ -41,4 +41,3 @@ export default function RootLayout({
     </html>
   );
 }
-    

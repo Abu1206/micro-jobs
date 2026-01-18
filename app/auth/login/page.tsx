@@ -67,7 +67,7 @@ export default function Login() {
             school
           </span>
           <span className="text-white font-bold tracking-wide text-sm uppercase">
-            CampusConnect
+            Micra Jobs
           </span>
         </Link>
         <Link

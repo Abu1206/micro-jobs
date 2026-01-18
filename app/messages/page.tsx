@@ -35,7 +35,13 @@ export default function Messages() {
   const [searchQuery, setSearchQuery] = useState("");
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [activeUsers, setActiveUsers] = useState<ActiveUser[]>([]);
+  const [menuOpen, setMenuOpen] = useState(false);
   const supabase = createClient();
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    router.push("/");
+  };
 
   useEffect(() => {
     const getUser = async () => {
@@ -70,7 +76,7 @@ export default function Messages() {
               name: u.full_name,
               avatar: u.avatar_url,
               isOnline: Math.random() > 0.5,
-            }))
+            })),
           );
         }
       }
@@ -82,7 +88,7 @@ export default function Messages() {
   }, []);
 
   const filteredConversations = conversations.filter((conv) =>
-    conv.participantName?.toLowerCase().includes(searchQuery.toLowerCase())
+    conv.participantName?.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   const unreadCount = conversations.filter((c) => c.unread).length;
@@ -101,11 +107,16 @@ export default function Messages() {
         {/* Header */}
         <header className="sticky top-0 z-50 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-md px-5 py-3 pt-4 flex items-center justify-between border-b border-gray-200 dark:border-white/10">
           <div className="flex flex-col">
-            <h1 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight leading-tight">
-              Messages
-            </h1>
+            <Link href="/dashboard" className="flex items-center gap-2 mb-2">
+              <span className="material-symbols-outlined text-primary text-xl">
+                school
+              </span>
+              <h1 className="text-lg font-bold text-slate-900 dark:text-white">
+                Micra Jobs
+              </h1>
+            </Link>
             <span className="text-xs font-medium text-gray-500 dark:text-gray-400">
-              You have {unreadCount} unread chats
+              {unreadCount} unread
             </span>
           </div>
           <div className="flex items-center gap-3">
@@ -114,11 +125,32 @@ export default function Messages() {
                 tune
               </span>
             </button>
-            <button className="flex items-center justify-center h-10 w-10 rounded-full bg-primary text-white hover:opacity-90 transition-opacity shadow-lg shadow-primary/25 group">
-              <span className="material-symbols-outlined text-[22px] font-semibold group-hover:scale-110 transition-transform">
-                edit_square
-              </span>
-            </button>
+            <div className="relative">
+              <button
+                onClick={() => setMenuOpen(!menuOpen)}
+                className="flex items-center justify-center w-10 h-10 rounded-full hover:bg-gray-100 dark:hover:bg-white/10 transition-colors"
+              >
+                <span className="material-symbols-outlined text-slate-900 dark:text-white">
+                  account_circle
+                </span>
+              </button>
+              {menuOpen && (
+                <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-surface-dark rounded-lg shadow-xl border border-gray-200 dark:border-white/10 z-50">
+                  <Link
+                    href="/profile/setup"
+                    className="block px-4 py-2 text-slate-900 dark:text-white hover:bg-gray-100 dark:hover:bg-white/10 rounded-t-lg transition-colors"
+                  >
+                    Edit Profile
+                  </Link>
+                  <button
+                    onClick={handleLogout}
+                    className="w-full text-left px-4 py-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-b-lg transition-colors"
+                  >
+                    Logout
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         </header>
 
