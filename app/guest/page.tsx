@@ -15,6 +15,10 @@ interface Opportunity {
   deadline: string;
   created_at: string;
   user_id: string;
+  user_profiles?: {
+    full_name: string;
+    avatar_url?: string;
+  };
 }
 
 export default function GuestBrowse() {
@@ -29,7 +33,15 @@ export default function GuestBrowse() {
       try {
         const { data, error } = await supabase
           .from("opportunities")
-          .select("*")
+          .select(
+            `
+            *,
+            user_profiles (
+              full_name,
+              avatar_url
+            )
+          `,
+          )
           .eq("status", "active")
           .order("created_at", { ascending: false });
 
@@ -183,6 +195,38 @@ export default function GuestBrowse() {
                       </span>
                     ))}
                   </div>
+
+                  {/* Creator Profile */}
+                  {opp.user_profiles && (
+                    <Link
+                      href={`/profile/${opp.user_id}`}
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <div className="mb-3 p-2.5 rounded-lg bg-slate-50 dark:bg-white/5 hover:bg-slate-100 dark:hover:bg-white/10 transition-colors group/creator flex items-center gap-2.5">
+                        <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-300 dark:bg-gray-700 flex-shrink-0">
+                          {opp.user_profiles.avatar_url ? (
+                            <img
+                              src={opp.user_profiles.avatar_url}
+                              alt={opp.user_profiles.full_name}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center bg-primary/20 text-primary font-bold text-xs">
+                              {opp.user_profiles.full_name?.charAt(0) || "U"}
+                            </div>
+                          )}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs font-bold text-slate-900 dark:text-white truncate group-hover/creator:text-primary transition-colors">
+                            {opp.user_profiles.full_name || "Anonymous"}
+                          </p>
+                        </div>
+                        <span className="material-symbols-outlined text-slate-400 group-hover/creator:text-primary transition-colors text-sm flex-shrink-0">
+                          arrow_forward
+                        </span>
+                      </div>
+                    </Link>
+                  )}
 
                   <div className="pt-3 border-t border-gray-200 dark:border-white/10 flex items-center justify-between">
                     <span className="text-xs text-gray-500 dark:text-gray-500">

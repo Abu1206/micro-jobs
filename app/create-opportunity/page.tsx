@@ -167,35 +167,31 @@ export default function CreateOpportunity() {
         return;
       }
 
-      // Upload media files
+      // Convert media files to base64 data URLs
       const mediaUrls: string[] = [];
       for (const media of mediaFiles) {
         try {
-          const fileName = `${user.id}-${Date.now()}-${media.file.name}`;
-          const { error: uploadError } = await supabase.storage
-            .from("opportunity-media")
-            .upload(fileName, media.file);
+          const reader = new FileReader();
+          const base64Data: string = await new Promise((resolve, reject) => {
+            reader.onload = () => {
+              const result = reader.result as string;
+              resolve(result); // This is the base64 data URL
+            };
+            reader.onerror = () => reject(new Error("Failed to read file"));
+            reader.readAsDataURL(media.file);
+          });
 
-          if (uploadError) {
-            console.error(`Upload error for ${media.file.name}:`, uploadError);
-            throw uploadError;
-          }
-
-          const { data } = supabase.storage
-            .from("opportunity-media")
-            .getPublicUrl(fileName);
-
-          console.log(`Media uploaded successfully: ${data.publicUrl}`);
-          mediaUrls.push(data.publicUrl);
+          console.log(`Media converted to base64: ${media.file.name}`);
+          mediaUrls.push(base64Data);
         } catch (mediaError: any) {
-          console.error("Media upload failed:", mediaError);
-          alert(`Failed to upload media: ${mediaError.message}`);
+          console.error("Media conversion failed:", mediaError);
+          alert(`Failed to convert media: ${mediaError.message}`);
           setIsSubmitting(false);
           return;
         }
       }
 
-      console.log("All media URLs:", mediaUrls);
+      console.log("All media data URLs ready for database");
 
       // Create opportunity
       const { data, error } = await supabase

@@ -17,6 +17,10 @@ interface Opportunity {
   deadline: string;
   created_at: string;
   user_id: string;
+  user_profiles?: {
+    full_name: string;
+    avatar_url?: string;
+  };
 }
 
 export default function Dashboard() {
@@ -35,11 +39,19 @@ export default function Dashboard() {
       } = await supabase.auth.getUser();
       setUser(user);
 
-      // Fetch opportunities from database
+      // Fetch opportunities from database with creator profile info
       if (user) {
         const { data, error } = await supabase
           .from("opportunities")
-          .select("*")
+          .select(
+            `
+            *,
+            user_profiles (
+              full_name,
+              avatar_url
+            )
+          `,
+          )
           .eq("status", "active")
           .order("created_at", { ascending: false });
 
@@ -334,6 +346,42 @@ export default function Dashboard() {
                           {opp.description}
                         </p>
                       </div>
+
+                      {/* Creator Profile */}
+                      {opp.user_profiles && (
+                        <Link
+                          href={`/profile/${opp.user_id}`}
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <div className="flex items-center gap-3 p-3 rounded-lg bg-slate-50 dark:bg-white/5 hover:bg-slate-100 dark:hover:bg-white/10 transition-colors group/creator">
+                            <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-300 dark:bg-gray-700 flex-shrink-0">
+                              {opp.user_profiles.avatar_url ? (
+                                <img
+                                  src={opp.user_profiles.avatar_url}
+                                  alt={opp.user_profiles.full_name}
+                                  className="w-full h-full object-cover"
+                                />
+                              ) : (
+                                <div className="w-full h-full flex items-center justify-center bg-primary/20 text-primary font-bold text-lg">
+                                  {opp.user_profiles.full_name?.charAt(0) ||
+                                    "U"}
+                                </div>
+                              )}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-bold text-slate-900 dark:text-white truncate group-hover/creator:text-primary transition-colors">
+                                {opp.user_profiles.full_name || "Anonymous"}
+                              </p>
+                              <p className="text-xs text-gray-500 dark:text-gray-400">
+                                Posted this opportunity
+                              </p>
+                            </div>
+                            <span className="material-symbols-outlined text-slate-400 group-hover/creator:text-primary transition-colors text-lg flex-shrink-0">
+                              arrow_forward
+                            </span>
+                          </div>
+                        </Link>
+                      )}
 
                       {/* Tags */}
                       {opp.tags && opp.tags.length > 0 && (

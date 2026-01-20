@@ -7,7 +7,6 @@ import { createClient } from "@/lib/supabase/client";
 
 export default function ProfileSetup() {
   const [step, setStep] = useState(1);
-  
 
   const [loading, setLoading] = useState(false);
   const [authLoading, setAuthLoading] = useState(true);
@@ -93,26 +92,25 @@ export default function ProfileSetup() {
         return;
       }
 
-      // --- Upload profile photo ---
+      // --- Convert profile photo to base64 ---
       let avatarUrl: string | null = null;
       if (formData.profilePhoto) {
-        const fileExt = formData.profilePhoto.name.split(".").pop();
-        const fileName = `${user.id}-${Date.now()}.${fileExt}`;
-        const filePath = `${user.id}/${fileName}`;
-
-        const { error: uploadError } = await supabase.storage
-          .from("profile-photos")
-          .upload(filePath, formData.profilePhoto, {
-            cacheControl: "3600",
-            upsert: true,
+        try {
+          const reader = new FileReader();
+          avatarUrl = await new Promise((resolve, reject) => {
+            reader.onload = () => {
+              resolve(reader.result as string);
+            };
+            reader.onerror = () => reject(new Error("Failed to read file"));
+            reader.readAsDataURL(formData.profilePhoto as Blob);
           });
-
-        if (uploadError) throw uploadError;
-
-        const { data: publicUrlData } = supabase.storage
-          .from("profile-photos")
-          .getPublicUrl(filePath);
-        avatarUrl = publicUrlData.publicUrl;
+          console.log("Profile photo converted to base64");
+        } catch (photoError: any) {
+          console.error("Photo conversion failed:", photoError);
+          alert(`Failed to convert photo: ${photoError.message}`);
+          setLoading(false);
+          return;
+        }
       }
 
       // --- Upsert profile ---

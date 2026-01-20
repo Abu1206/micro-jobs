@@ -25,34 +25,22 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // Convert file to base64
     const fileBuffer = await file.arrayBuffer();
-    const fileName = `${user.id}-${Date.now()}-${file.name}`;
+    const base64 = Buffer.from(fileBuffer).toString('base64');
+    const base64DataUrl = `data:${file.type};base64,${base64}`;
 
-    // Upload to Supabase Storage
-    const { error: uploadError } = await supabase.storage
-      .from('profile-photos')
-      .upload(fileName, fileBuffer, {
-        contentType: file.type,
-      });
-
-    if (uploadError) throw uploadError;
-
-    // Get public URL
-    const { data } = supabase.storage
-      .from('profile-photos')
-      .getPublicUrl(fileName);
-
-    // Update user metadata with photo URL
+    // Update user metadata with base64 photo URL
     await supabase.auth.updateUser({
       data: {
-        profile_photo_url: data.publicUrl,
+        profile_photo_url: base64DataUrl,
       },
     });
 
     return NextResponse.json(
       {
         message: 'Photo uploaded successfully',
-        url: data.publicUrl,
+        url: base64DataUrl,
       },
       { status: 200 }
     );
