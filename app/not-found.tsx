@@ -18,12 +18,18 @@ export default function NotFound() {
         </p>
         <div className="flex gap-4 justify-center">
           <Link href="/">
-            <button className="px-6 py-3 bg-primary text-white rounded-lg hover:bg-blue-600 transition-colors font-semibold">
+            <button
+              aria-label="Go back to homepage"
+              className="px-6 py-3 bg-primary text-white rounded-lg hover:bg-blue-600 transition-colors font-semibold"
+            >
               Go Home
             </button>
           </Link>
           <Link href="/guest">
-            <button className="px-6 py-3 bg-gray-200 dark:bg-white/10 text-slate-900 dark:text-white rounded-lg hover:bg-gray-300 dark:hover:bg-white/20 transition-colors font-semibold">
+            <button
+              aria-label="Browse available opportunities"
+              className="px-6 py-3 bg-gray-200 dark:bg-white/10 text-slate-900 dark:text-white rounded-lg hover:bg-gray-300 dark:hover:bg-white/20 transition-colors font-semibold"
+            >
               Browse Opportunities
             </button>
           </Link>
