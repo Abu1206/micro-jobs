@@ -22,7 +22,10 @@ const SKILLS_SUGGESTIONS = [
 
 export default function ProfileSetup() {
   const [step, setStep] = useState(1);
-  const [selectedSkills, setSelectedSkills] = useState(["ProductDesign", "React"]);
+  const [selectedSkills, setSelectedSkills] = useState([
+    "ProductDesign",
+    "React",
+  ]);
   const [skillInput, setSkillInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [authLoading, setAuthLoading] = useState(true);
@@ -33,9 +36,6 @@ export default function ProfileSetup() {
     university: "",
     major: "",
     profilePhoto: null as File | null,
-    github: "",
-    behance: "",
-    linkedin: "",
   });
 
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -83,7 +83,7 @@ export default function ProfileSetup() {
 
   const toggleSkill = (skill: string) => {
     setSelectedSkills((prev) =>
-      prev.includes(skill) ? prev.filter((s) => s !== skill) : [...prev, skill]
+      prev.includes(skill) ? prev.filter((s) => s !== skill) : [...prev, skill],
     );
   };
 
@@ -120,11 +120,16 @@ export default function ProfileSetup() {
 
         const { error: uploadError } = await supabase.storage
           .from("profile-photos")
-          .upload(filePath, formData.profilePhoto, { cacheControl: "3600", upsert: true });
+          .upload(filePath, formData.profilePhoto, {
+            cacheControl: "3600",
+            upsert: true,
+          });
 
         if (uploadError) throw uploadError;
 
-        const { data: publicUrlData } = supabase.storage.from("profile-photos").getPublicUrl(filePath);
+        const { data: publicUrlData } = supabase.storage
+          .from("profile-photos")
+          .getPublicUrl(filePath);
         avatarUrl = publicUrlData.publicUrl;
       }
 
@@ -139,16 +144,12 @@ export default function ProfileSetup() {
             university: formData.university,
             major: formData.major,
             avatar_url: avatarUrl,
-            skills: selectedSkills,
-            github_url: formData.github,
-            behance_url: formData.behance,
-            linkedin_url: formData.linkedin,
             verified: false,
             rating: 0,
             endorsements: 0,
             updated_at: new Date().toISOString(),
           },
-          { onConflict: "user_id" }
+          { onConflict: "user_id" },
         );
 
       if (upsertError) throw upsertError;
@@ -174,7 +175,6 @@ export default function ProfileSetup() {
     }
   };
 
-
   return (
     <div className="relative flex h-full min-h-screen w-full flex-col overflow-x-hidden bg-background-light dark:bg-background-dark">
       {/* Header */}
@@ -195,7 +195,7 @@ export default function ProfileSetup() {
       </header>
 
       {/* Desktop Layout */}
-      <div className="hidden lg:flex h-full"
+      <div className="hidden lg:flex h-full">
         {/* Left Panel - Info */}
         <div className="w-1/2 bg-linear-to-br from-primary/20 to-background-dark flex flex-col items-center justify-center p-12">
           <div className="max-w-md text-center">
@@ -233,20 +233,6 @@ export default function ProfileSetup() {
                   <p className="text-gray-400 text-sm">
                     Share your background, interests, and what you're looking
                     for
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center shrink-0">
-                  <span className="material-symbols-outlined text-white">
-                    work
-                  </span>
-                </div>
-                <div className="text-left">
-                  <h3 className="text-white font-bold mb-1">Showcase Work</h3>
-                  <p className="text-gray-400 text-sm">
-                    Connect your GitHub, portfolio, and professional links
                   </p>
                 </div>
               </div>
@@ -363,90 +349,6 @@ export default function ProfileSetup() {
                     onChange={handleInputChange}
                     placeholder="e.g. Computer Science"
                     className="w-full rounded-lg bg-surface-light dark:bg-surface-dark border border-slate-200 dark:border-slate-700 px-4 py-3 text-base text-slate-900 dark:text-white placeholder-slate-400 focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none transition-all"
-                  />
-                </div>
-              </div>
-            </section>
-
-            {/* Skills Section */}
-            <section className="space-y-4">
-              <label className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                Skills & Interests
-              </label>
-              <div className="flex flex-wrap gap-2">
-                {selectedSkills.map((skill) => (
-                  <div
-                    key={skill}
-                    className="flex items-center gap-2 rounded-full bg-primary/20 border border-primary/30 px-3 py-1.5 text-sm font-medium text-primary"
-                  >
-                    <span>#{skill}</span>
-                    <button
-                      type="button"
-                      onClick={() => toggleSkill(skill)}
-                      className="cursor-pointer hover:text-white"
-                    >
-                      <span className="material-symbols-outlined text-[16px]">
-                        close
-                      </span>
-                    </button>
-                  </div>
-                ))}
-                <input
-                  type="text"
-                  value={skillInput}
-                  onChange={(e) => setSkillInput(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      e.preventDefault();
-                      addSkill(skillInput);
-                    }
-                  }}
-                  placeholder="Add skills..."
-                  className="flex-1 min-w-30 bg-transparent border-none p-2 text-sm text-slate-900 dark:text-white placeholder-slate-500 focus:ring-0"
-                />
-              </div>
-            </section>
-
-            {/* Work Links Section */}
-            <section className="space-y-4">
-              <label className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                Connect Your Work
-              </label>
-
-              <div className="space-y-3">
-                <div className="flex items-center gap-3 rounded-lg bg-surface-light dark:bg-surface-dark border border-slate-200 dark:border-slate-700 p-3">
-                  <span className="text-xl">💻</span>
-                  <input
-                    type="url"
-                    name="github"
-                    value={formData.github}
-                    onChange={handleInputChange}
-                    placeholder="github.com/username"
-                    className="w-full bg-transparent border-none p-0 text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:ring-0"
-                  />
-                </div>
-
-                <div className="flex items-center gap-3 rounded-lg bg-surface-light dark:bg-surface-dark border border-slate-200 dark:border-slate-700 p-3">
-                  <span className="text-xl">🎨</span>
-                  <input
-                    type="url"
-                    name="behance"
-                    value={formData.behance}
-                    onChange={handleInputChange}
-                    placeholder="behance.net/username"
-                    className="w-full bg-transparent border-none p-0 text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:ring-0"
-                  />
-                </div>
-
-                <div className="flex items-center gap-3 rounded-lg bg-surface-light dark:bg-surface-dark border border-slate-200 dark:border-slate-700 p-3">
-                  <span className="text-xl">💼</span>
-                  <input
-                    type="url"
-                    name="linkedin"
-                    value={formData.linkedin}
-                    onChange={handleInputChange}
-                    placeholder="linkedin.com/in/username"
-                    className="w-full bg-transparent border-none p-0 text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:ring-0"
                   />
                 </div>
               </div>
@@ -605,102 +507,6 @@ export default function ProfileSetup() {
                       className="w-full rounded-lg bg-surface-light dark:bg-surface-dark border border-slate-200 dark:border-slate-700 px-4 py-3 text-base text-slate-900 dark:text-white placeholder-slate-400 focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none transition-all shadow-sm"
                     />
                   </div>
-                </div>
-              </div>
-            </section>
-
-            {/* Skills Section */}
-            <section className="flex flex-col gap-4">
-              <div className="flex justify-between items-end">
-                <h3 className="text-lg font-bold text-slate-900 dark:text-white border-l-4 border-primary pl-3">
-                  Skills & Interests
-                </h3>
-                <button
-                  type="button"
-                  className="text-xs text-primary font-bold uppercase tracking-wide"
-                >
-                  Browse All
-                </button>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {selectedSkills.map((skill) => (
-                  <div
-                    key={skill}
-                    className="flex items-center gap-1.5 rounded-full bg-primary/20 border border-primary/30 px-3 py-1.5 text-sm font-medium text-primary"
-                  >
-                    <span>#{skill}</span>
-                    <button
-                      type="button"
-                      onClick={() => toggleSkill(skill)}
-                      className="cursor-pointer hover:text-white"
-                    >
-                      <span className="material-symbols-outlined text-[16px]">
-                        close
-                      </span>
-                    </button>
-                  </div>
-                ))}
-                <input
-                  type="text"
-                  value={skillInput}
-                  onChange={(e) => setSkillInput(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      e.preventDefault();
-                      addSkill(skillInput);
-                    }
-                  }}
-                  placeholder="Add skills..."
-                  className="flex-1 min-w-30 bg-transparent border-none p-2 text-sm text-slate-900 dark:text-white placeholder-slate-500 focus:ring-0"
-                />
-              </div>
-            </section>
-
-            {/* Connect Work Section */}
-            <section className="flex flex-col gap-5 mb-4">
-              <div className="flex justify-between items-center">
-                <h3 className="text-lg font-bold text-slate-900 dark:text-white border-l-4 border-primary pl-3">
-                  Connect Your Work
-                </h3>
-                <span className="text-xs text-slate-500 dark:text-slate-500 bg-surface-light dark:bg-surface-dark px-2 py-1 rounded">
-                  Optional
-                </span>
-              </div>
-              <div className="space-y-3">
-                <div className="flex items-center gap-3 rounded-lg bg-surface-light dark:bg-surface-dark border border-slate-200 dark:border-slate-700 p-3">
-                  <span className="text-xl">💻</span>
-                  <input
-                    type="url"
-                    name="github"
-                    value={formData.github}
-                    onChange={handleInputChange}
-                    placeholder="github.com/username"
-                    className="w-full bg-transparent border-none p-0 text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:ring-0"
-                  />
-                </div>
-
-                <div className="flex items-center gap-3 rounded-lg bg-surface-light dark:bg-surface-dark border border-slate-200 dark:border-slate-700 p-3">
-                  <span className="text-xl">🎨</span>
-                  <input
-                    type="url"
-                    name="behance"
-                    value={formData.behance}
-                    onChange={handleInputChange}
-                    placeholder="behance.net/username"
-                    className="w-full bg-transparent border-none p-0 text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:ring-0"
-                  />
-                </div>
-
-                <div className="flex items-center gap-3 rounded-lg bg-surface-light dark:bg-surface-dark border border-slate-200 dark:border-slate-700 p-3">
-                  <span className="text-xl">💼</span>
-                  <input
-                    type="url"
-                    name="linkedin"
-                    value={formData.linkedin}
-                    onChange={handleInputChange}
-                    placeholder="linkedin.com/in/username"
-                    className="w-full bg-transparent border-none p-0 text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:ring-0"
-                  />
                 </div>
               </div>
             </section>

@@ -26,25 +26,26 @@ export default function PublicProfile() {
         } = await supabase.auth.getUser();
         setCurrentUser(user);
 
-        // Fetch profile by userId
-        const { data: profileData, error } = await supabase
-          .from("user_profiles")
-          .select("*")
-          .eq("user_id", userId)
-          .single();
+        // Fetch profile via API endpoint
+        const response = await fetch(`/api/profile/${userId}`);
 
-        if (error) throw error;
+        if (!response.ok) {
+          throw new Error(`API returned ${response.status}`);
+        }
 
-        setProfile(profileData);
-      } catch (err) {
-        console.error("Error fetching profile:", err);
+        const { profile } = await response.json();
+        setProfile(profile);
+      } catch (err: any) {
+        console.error("Error fetching profile:", err?.message || err);
         setProfile(null);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchProfile();
+    if (userId) {
+      fetchProfile();
+    }
   }, [userId]);
 
   const handleConnect = () => setIsConnected(!isConnected);
@@ -118,7 +119,9 @@ export default function PublicProfile() {
               <div className="absolute -inset-1 bg-primary/30 rounded-full blur-md opacity-75 group-hover:opacity-100 transition duration-500"></div>
               <div
                 className="relative bg-center bg-no-repeat bg-cover rounded-full h-32 w-32 border-4 border-background-light dark:border-background-dark shadow-xl"
-                style={{ backgroundImage: `url("${profile.profile_photo_url}")` }}
+                style={{
+                  backgroundImage: `url("${profile.profile_photo_url}")`,
+                }}
               ></div>
             </div>
 
@@ -240,7 +243,10 @@ export default function PublicProfile() {
             <div className="flex overflow-x-auto gap-4 no-scrollbar pb-2">
               {profile.achievements?.length > 0 ? (
                 profile.achievements.map((ach: any) => (
-                  <div key={ach.id} className="flex flex-col items-center gap-2 min-w-20">
+                  <div
+                    key={ach.id}
+                    className="flex flex-col items-center gap-2 min-w-20"
+                  >
                     <div
                       className={`w-16 h-16 rounded-full flex items-center justify-center shadow-lg border-2 border-background-light dark:border-background-dark bg-linear-to-br from-primary/50 to-primary/20 ring-2 ring-primary/30`}
                     >

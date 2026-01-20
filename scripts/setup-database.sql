@@ -19,6 +19,7 @@ CREATE TABLE IF NOT EXISTS user_profiles (
   bio TEXT,
   avatar_url TEXT,
   banner_url TEXT,
+  skills TEXT[] DEFAULT '{}',
   verified BOOLEAN DEFAULT FALSE,
   rating DECIMAL(3, 1) DEFAULT 5.0,
   endorsements INTEGER DEFAULT 0,
