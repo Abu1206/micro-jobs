@@ -5,28 +5,13 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
-const SKILLS_SUGGESTIONS = [
-  "ProductDesign",
-  "React",
-  "Marketing",
-  "Python",
-  "JavaScript",
-  "UI/UX",
-  "Data Science",
-  "Project Management",
-  "Content Writing",
-  "Graphic Design",
-  "Mobile Development",
-  "Web Development",
-];
-
 export default function ProfileSetup() {
   const [step, setStep] = useState(1);
   const [selectedSkills, setSelectedSkills] = useState([
     "ProductDesign",
     "React",
   ]);
-  const [skillInput, setSkillInput] = useState("");
+
   const [loading, setLoading] = useState(false);
   const [authLoading, setAuthLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -81,19 +66,6 @@ export default function ProfileSetup() {
     if (file) setFormData((prev) => ({ ...prev, profilePhoto: file }));
   };
 
-  const toggleSkill = (skill: string) => {
-    setSelectedSkills((prev) =>
-      prev.includes(skill) ? prev.filter((s) => s !== skill) : [...prev, skill],
-    );
-  };
-
-  const addSkill = (skill: string) => {
-    if (skill && !selectedSkills.includes(skill)) {
-      setSelectedSkills((prev) => [...prev, skill]);
-      setSkillInput("");
-    }
-  };
-
   // --- Form Submit ---
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -144,6 +116,7 @@ export default function ProfileSetup() {
             university: formData.university,
             major: formData.major,
             avatar_url: avatarUrl,
+            skills: selectedSkills,
             verified: false,
             rating: 0,
             endorsements: 0,

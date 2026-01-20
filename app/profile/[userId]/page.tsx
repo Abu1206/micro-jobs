@@ -5,13 +5,30 @@ import Link from "next/link";
 import { useRouter, useParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
+interface Profile {
+  id: string;
+  user_id: string;
+  full_name: string;
+  headline: string;
+  university: string;
+  major: string;
+  avatar_url: string;
+  skills: string[];
+  verified: boolean;
+  rating: number;
+  endorsements: number;
+  created_at: string;
+  updated_at: string;
+}
+
 export default function PublicProfile() {
   const params = useParams();
   const router = useRouter();
   const userId = params.userId as string;
 
-  const [profile, setProfile] = useState<any>(null);
+  const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [isConnected, setIsConnected] = useState(false);
   const [currentUser, setCurrentUser] = useState<any>(null);
 
@@ -20,23 +37,45 @@ export default function PublicProfile() {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
+        setLoading(true);
+        setError(null);
+
         // Get current logged-in user
         const {
           data: { user },
         } = await supabase.auth.getUser();
         setCurrentUser(user);
 
-        // Fetch profile via API endpoint
-        const response = await fetch(`/api/profile/${userId}`);
+        // Handle "current" as a special case for viewing own profile
+        let profileUserId = userId;
+        if (userId === "current") {
+          if (!user) {
+            router.push("/auth/login");
+            return;
+          }
+          profileUserId = user.id;
+        }
+
+        // Fetch profile from API endpoint (uses server-side client with better permissions)
+        const response = await fetch(`/api/profile/${profileUserId}`);
 
         if (!response.ok) {
-          throw new Error(`API returned ${response.status}`);
+          const errorData = await response.json();
+          throw new Error(
+            errorData.details || errorData.error || `HTTP ${response.status}`,
+          );
         }
 
         const { profile } = await response.json();
+
+        if (!profile) {
+          throw new Error("Profile not found");
+        }
+
         setProfile(profile);
       } catch (err: any) {
         console.error("Error fetching profile:", err?.message || err);
+        setError(err?.message || "Failed to load profile");
         setProfile(null);
       } finally {
         setLoading(false);
@@ -66,15 +105,15 @@ export default function PublicProfile() {
     );
   }
 
-  if (!profile) {
+  if (error || !profile) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background-light dark:bg-background-dark">
         <div className="text-center">
           <h1 className="text-white text-2xl font-bold mb-4">
-            Profile not found
+            {error || "Profile not found"}
           </h1>
           <Link href="/dashboard">
-            <button className="px-6 py-3 bg-primary text-white rounded-lg font-semibold">
+            <button className="px-6 py-3 bg-primary text-white rounded-lg font-semibold hover:bg-primary/90 transition-colors">
               Back to Dashboard
             </button>
           </Link>
@@ -117,21 +156,64 @@ export default function PublicProfile() {
           <div className="px-4 pb-6 pt-2 flex flex-col items-center gap-6">
             <div className="relative group">
               <div className="absolute -inset-1 bg-primary/30 rounded-full blur-md opacity-75 group-hover:opacity-100 transition duration-500"></div>
-              <div
-                className="relative bg-center bg-no-repeat bg-cover rounded-full h-32 w-32 border-4 border-background-light dark:border-background-dark shadow-xl"
-                style={{
-                  backgroundImage: `url("${profile.profile_photo_url}")`,
-                }}
-              ></div>
+              {profile.avatar_url && (
+                <div
+                  className="relative bg-center bg-no-repeat bg-cover rounded-full h-32 w-32 border-4 border-background-light dark:border-background-dark shadow-xl"
+                  style={{
+                    backgroundImage: `url("${profile.avatar_url}")`,
+                  }}
+                />
+              )}
+              {!profile.avatar_url && (
+                <div className="relative w-32 h-32 rounded-full bg-primary/20 border-4 border-background-light dark:border-background-dark shadow-xl flex items-center justify-center">
+                  <span className="material-symbols-outlined text-primary text-6xl">
+                    account_circle
+                  </span>
+                </div>
+              )}
             </div>
 
             <div className="flex flex-col items-center justify-center text-center gap-1">
-              <h1 className="text-2xl font-bold leading-tight text-slate-900 dark:text-white">
-                {profile.full_name}
-              </h1>
-              <p className="text-gray-500 dark:text-gray-400 text-base font-medium">
-                {profile.major} @ {profile.university}
-              </p>
+              <div className="flex items-center gap-2 justify-center">
+                <h1 className="text-2xl font-bold leading-tight text-slate-900 dark:text-white">
+                  {profile.full_name}
+                </h1>
+                {profile.verified && (
+                  <span className="material-symbols-outlined text-blue-500 text-xl">
+                    verified
+                  </span>
+                )}
+              </div>
+              {profile.headline && (
+                <p className="text-gray-600 dark:text-gray-400 text-sm font-medium">
+                  {profile.headline}
+                </p>
+              )}
+              {profile.university && profile.major && (
+                <p className="text-gray-500 dark:text-gray-400 text-base font-medium">
+                  {profile.major} @ {profile.university}
+                </p>
+              )}
+            </div>
+
+            {/* Stats */}
+            <div className="flex gap-8 justify-center">
+              <div className="flex flex-col items-center">
+                <p className="text-2xl font-bold text-slate-900 dark:text-white">
+                  {profile.rating || "5.0"}
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  Rating
+                </p>
+              </div>
+              <div className="flex flex-col items-center">
+                <p className="text-2xl font-bold text-slate-900 dark:text-white">
+                  {profile.endorsements || 0}
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  Endorsements
+                </p>
+              </div>
             </div>
 
             {/* Action Buttons */}
@@ -156,116 +238,42 @@ export default function PublicProfile() {
           </div>
 
           {/* Skills */}
-          <div className="px-4 py-2">
-            <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-3">
-              Skills & Interests
-            </h3>
-            <div className="flex flex-wrap gap-2">
-              {profile.skills?.map((skill: string, idx: number) => (
-                <span
-                  key={idx}
-                  className={`px-4 py-2 rounded-full text-sm font-semibold transition-colors ${
-                    idx % 2 === 0
-                      ? "bg-primary/10 border border-primary/20 text-primary"
-                      : "bg-gray-100 dark:bg-surface-dark text-gray-700 dark:text-gray-300"
-                  }`}
-                >
-                  {skill}
-                </span>
-              ))}
-            </div>
-          </div>
-
-          {/* Portfolio */}
-          <div className="px-4 py-4">
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="text-lg font-bold text-slate-900 dark:text-white">
-                Portfolio
+          {profile.skills && profile.skills.length > 0 && (
+            <div className="px-4 py-4">
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-3">
+                Skills & Interests
               </h3>
+              <div className="flex flex-wrap gap-2">
+                {profile.skills.map((skill: string, idx: number) => (
+                  <span
+                    key={idx}
+                    className={`px-4 py-2 rounded-full text-sm font-semibold transition-colors ${
+                      idx % 2 === 0
+                        ? "bg-primary/10 border border-primary/20 text-primary"
+                        : "bg-gray-100 dark:bg-surface-dark text-gray-700 dark:text-gray-300"
+                    }`}
+                  >
+                    {skill}
+                  </span>
+                ))}
+              </div>
             </div>
-            <div className="grid grid-cols-2 gap-3">
-              {profile.github_url && (
-                <a
-                  href={profile.github_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group relative flex flex-col gap-2 p-4 rounded-xl bg-white dark:bg-surface-dark border border-gray-100 dark:border-gray-800 hover:border-primary/50 transition-colors shadow-sm"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="bg-black text-white p-2 rounded-lg">
-                      <span className="material-symbols-outlined text-xl">
-                        code
-                      </span>
-                    </div>
-                    <span className="material-symbols-outlined ml-auto text-gray-400 group-hover:text-primary transition-colors text-sm">
-                      open_in_new
-                    </span>
-                  </div>
-                  <div>
-                    <p className="font-bold text-sm text-slate-900 dark:text-white">
-                      GitHub
-                    </p>
-                  </div>
-                </a>
-              )}
-              {profile.behance_url && (
-                <a
-                  href={profile.behance_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group relative flex flex-col gap-2 p-4 rounded-xl bg-white dark:bg-surface-dark border border-gray-100 dark:border-gray-800 hover:border-primary/50 transition-colors shadow-sm"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="bg-blue-600 text-white p-2 rounded-lg">
-                      <span className="material-symbols-outlined text-xl">
-                        palette
-                      </span>
-                    </div>
-                    <span className="material-symbols-outlined ml-auto text-gray-400 group-hover:text-primary transition-colors text-sm">
-                      open_in_new
-                    </span>
-                  </div>
-                  <div>
-                    <p className="font-bold text-sm text-slate-900 dark:text-white">
-                      Behance
-                    </p>
-                  </div>
-                </a>
-              )}
-            </div>
+          )}
+
+          {/* Divider */}
+          <div className="px-4 py-2">
+            <div className="h-px bg-gray-200 dark:bg-gray-800"></div>
           </div>
 
-          {/* Achievements */}
-          <div className="py-4 px-4">
-            <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-3">
-              Achievements
-            </h3>
-            <div className="flex overflow-x-auto gap-4 no-scrollbar pb-2">
-              {profile.achievements?.length > 0 ? (
-                profile.achievements.map((ach: any) => (
-                  <div
-                    key={ach.id}
-                    className="flex flex-col items-center gap-2 min-w-20"
-                  >
-                    <div
-                      className={`w-16 h-16 rounded-full flex items-center justify-center shadow-lg border-2 border-background-light dark:border-background-dark bg-linear-to-br from-primary/50 to-primary/20 ring-2 ring-primary/30`}
-                    >
-                      <span
-                        className="material-symbols-outlined text-white"
-                        style={{ fontSize: "32px" }}
-                      >
-                        {ach.icon || "verified"}
-                      </span>
-                    </div>
-                    <p className="text-xs font-bold text-center text-slate-900 dark:text-white">
-                      {ach.title}
-                    </p>
-                  </div>
-                ))
-              ) : (
-                <p className="text-gray-400 text-sm">No achievements yet</p>
-              )}
-            </div>
+          {/* Joined */}
+          <div className="px-4 py-4">
+            <p className="text-xs text-gray-500 dark:text-gray-400">
+              Joined{" "}
+              {new Date(profile.created_at).toLocaleDateString("en-US", {
+                year: "numeric",
+                month: "long",
+              })}
+            </p>
           </div>
         </div>
       </div>
