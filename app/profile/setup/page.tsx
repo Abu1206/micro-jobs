@@ -7,14 +7,12 @@ import { createClient } from "@/lib/supabase/client";
 
 export default function ProfileSetup() {
   const [step, setStep] = useState(1);
-  const [selectedSkills, setSelectedSkills] = useState([
-    "ProductDesign",
-    "React",
-  ]);
+  
 
   const [loading, setLoading] = useState(false);
   const [authLoading, setAuthLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     fullName: "",
     headline: "",
@@ -43,6 +41,13 @@ export default function ProfileSetup() {
     };
 
     checkAuth();
+
+    // Cleanup function to revoke preview URL when component unmounts
+    return () => {
+      if (previewUrl) {
+        URL.revokeObjectURL(previewUrl);
+      }
+    };
   }, []);
 
   if (authLoading) {
@@ -63,7 +68,12 @@ export default function ProfileSetup() {
 
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) setFormData((prev) => ({ ...prev, profilePhoto: file }));
+    if (file) {
+      setFormData((prev) => ({ ...prev, profilePhoto: file }));
+      // Create and store preview URL
+      const newPreviewUrl = URL.createObjectURL(file);
+      setPreviewUrl(newPreviewUrl);
+    }
   };
 
   // --- Form Submit ---
@@ -116,7 +126,6 @@ export default function ProfileSetup() {
             university: formData.university,
             major: formData.major,
             avatar_url: avatarUrl,
-            skills: selectedSkills,
             verified: false,
             rating: 0,
             endorsements: 0,
@@ -238,8 +247,8 @@ export default function ProfileSetup() {
                 <div
                   className="h-32 w-32 rounded-full bg-surface-dark border-4 border-slate-700 overflow-hidden bg-cover bg-center"
                   style={{
-                    backgroundImage: formData.profilePhoto
-                      ? `url(${URL.createObjectURL(formData.profilePhoto)})`
+                    backgroundImage: previewUrl
+                      ? `url(${previewUrl})`
                       : `url('/default-avatar.png')`, // fallback image
                   }}
                   onClick={() => fileInputRef.current?.click()}
@@ -383,6 +392,11 @@ export default function ProfileSetup() {
             <div className="relative group cursor-pointer">
               <div
                 className="h-32 w-32 rounded-full bg-surface-dark bg-cover bg-center border-4 border-background-light dark:border-background-dark shadow-lg transition-transform group-hover:scale-105"
+                style={{
+                  backgroundImage: previewUrl
+                    ? `url(${previewUrl})`
+                    : `url('/default-avatar.png')`,
+                }}
                 onClick={() => fileInputRef.current?.click()}
               />
               <input

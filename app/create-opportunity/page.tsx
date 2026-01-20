@@ -83,6 +83,15 @@ export default function CreateOpportunity() {
     };
 
     checkAuth();
+
+    // Cleanup function to revoke object URLs when component unmounts
+    return () => {
+      mediaFiles.forEach((media) => {
+        if (media.preview) {
+          URL.revokeObjectURL(media.preview);
+        }
+      });
+    };
   }, []);
 
   if (loading) {
@@ -137,7 +146,14 @@ export default function CreateOpportunity() {
   };
 
   const handleRemoveMedia = (id: string) => {
-    setMediaFiles((prev) => prev.filter((m) => m.id !== id));
+    setMediaFiles((prev) => {
+      const mediaToRemove = prev.find((m) => m.id === id);
+      // Clean up object URL to prevent memory leaks
+      if (mediaToRemove?.preview) {
+        URL.revokeObjectURL(mediaToRemove.preview);
+      }
+      return prev.filter((m) => m.id !== id);
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -154,18 +170,32 @@ export default function CreateOpportunity() {
       // Upload media files
       const mediaUrls: string[] = [];
       for (const media of mediaFiles) {
-        const fileName = `${user.id}-${Date.now()}-${media.file.name}`;
-        const { error: uploadError } = await supabase.storage
-          .from("opportunity-media")
-          .upload(fileName, media.file);
+        try {
+          const fileName = `${user.id}-${Date.now()}-${media.file.name}`;
+          const { error: uploadError } = await supabase.storage
+            .from("opportunity-media")
+            .upload(fileName, media.file);
 
-        if (!uploadError) {
+          if (uploadError) {
+            console.error(`Upload error for ${media.file.name}:`, uploadError);
+            throw uploadError;
+          }
+
           const { data } = supabase.storage
             .from("opportunity-media")
             .getPublicUrl(fileName);
+
+          console.log(`Media uploaded successfully: ${data.publicUrl}`);
           mediaUrls.push(data.publicUrl);
+        } catch (mediaError: any) {
+          console.error("Media upload failed:", mediaError);
+          alert(`Failed to upload media: ${mediaError.message}`);
+          setIsSubmitting(false);
+          return;
         }
       }
+
+      console.log("All media URLs:", mediaUrls);
 
       // Create opportunity
       const { data, error } = await supabase
@@ -186,6 +216,11 @@ export default function CreateOpportunity() {
 
       if (error) throw error;
 
+      console.log(
+        "✅ Opportunity created successfully with media URLs:",
+        mediaUrls,
+      );
+      alert("✅ Opportunity posted successfully!");
       router.push("/dashboard");
     } catch (err: any) {
       console.error("Error creating opportunity:", err);

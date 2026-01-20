@@ -361,6 +361,29 @@ export default function OpportunityDetails() {
             </div>
           )}
 
+          {/* Media Gallery */}
+          {opportunity.media_urls && opportunity.media_urls.length > 0 && (
+            <div className="mb-8">
+              <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-4">
+                Media
+              </h2>
+              <div className="grid grid-cols-1 gap-4">
+                {opportunity.media_urls.map((url, index) => (
+                  <div
+                    key={index}
+                    className="relative rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-800 aspect-video"
+                  >
+                    <img
+                      src={url}
+                      alt={`Opportunity media ${index + 1}`}
+                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Creator Card */}
           {creator && (
             <Link href={`/profile/${creator.id}`}>
