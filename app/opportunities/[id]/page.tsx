@@ -280,12 +280,12 @@ export default function OpportunityDetails() {
               {opportunity.category === "gigs"
                 ? "Part-time Job"
                 : opportunity.category === "events"
-                ? "Campus Event"
-                : opportunity.category === "collab"
-                ? "Collaboration"
-                : opportunity.category === "housing"
-                ? "Housing"
-                : "Marketplace"}
+                  ? "Campus Event"
+                  : opportunity.category === "collab"
+                    ? "Collaboration"
+                    : opportunity.category === "housing"
+                      ? "Housing"
+                      : "Marketplace"}
             </div>
           </div>
 
@@ -318,18 +318,46 @@ export default function OpportunityDetails() {
 
           {/* Deadline Card */}
           {opportunity.deadline && (
-            <div className="mb-8 p-4 rounded-xl bg-gray-50 dark:bg-surface-dark border-l-4 border-primary flex items-start gap-4 shadow-sm">
-              <div className="p-2 rounded-lg bg-primary/10 text-primary shrink-0">
-                <span className="material-symbols-outlined">event</span>
+            <div className="mb-8 p-6 rounded-xl bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20 border-l-4 border-primary flex items-start gap-4 shadow-md hover:shadow-lg transition-shadow">
+              <div className="p-3 rounded-lg bg-primary/20 text-primary shrink-0">
+                <span className="material-symbols-outlined text-[28px]">
+                  calendar_month
+                </span>
               </div>
-              <div>
-                <p className="text-slate-900 dark:text-white font-bold text-base">
+              <div className="flex-1">
+                <p className="text-slate-900 dark:text-white font-bold text-lg">
                   Application Deadline
                 </p>
-                <p className="text-slate-500 dark:text-gray-400 text-sm mt-0.5">
-                  {formatDate(opportunity.deadline)} • 5:00 PM
-                </p>
+                <div className="flex flex-wrap gap-4 mt-2">
+                  <div>
+                    <p className="text-slate-600 dark:text-gray-400 text-xs uppercase tracking-wide font-semibold">
+                      Date & Time
+                    </p>
+                    <p className="text-slate-900 dark:text-white font-semibold text-base mt-1">
+                      {formatDate(opportunity.deadline)} • 5:00 PM
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-slate-600 dark:text-gray-400 text-xs uppercase tracking-wide font-semibold">
+                      Time Remaining
+                    </p>
+                    <p className="text-primary font-bold text-base mt-1">
+                      {Math.max(
+                        0,
+                        Math.ceil(
+                          (new Date(opportunity.deadline).getTime() -
+                            new Date().getTime()) /
+                            (1000 * 60 * 60 * 24),
+                        ),
+                      )}{" "}
+                      days left
+                    </p>
+                  </div>
+                </div>
               </div>
+              <button className="shrink-0 px-4 py-2 bg-primary text-white rounded-lg font-semibold text-sm hover:bg-blue-600 transition-colors">
+                Add to Calendar
+              </button>
             </div>
           )}
 
@@ -338,53 +366,59 @@ export default function OpportunityDetails() {
             <Link href={`/profile/${creator.id}`}>
               <div className="mb-8 relative group cursor-pointer">
                 <div className="absolute -inset-0.5 bg-linear-to-r from-primary/50 to-blue-600/50 rounded-2xl opacity-20 group-hover:opacity-40 transition duration-300 blur"></div>
-                <div className="relative flex items-center gap-4 p-4 rounded-2xl bg-white dark:bg-surface-dark border border-gray-100 dark:border-white/10">
-                  <div className="relative">
-                    <img
-                      alt={creator.full_name}
-                      className="size-14 rounded-full object-cover border-2 border-white dark:border-black"
-                      src={
-                        creator.avatar_url ||
-                        "https://via.placeholder.com/56?text=User"
-                      }
-                    />
-                    {creator.verified && (
-                      <div
-                        className="absolute -bottom-1 -right-1 bg-primary text-white rounded-full p-0.5"
-                        title="Verified Student"
-                      >
-                        <span className="material-symbols-outlined text-[14px] font-bold block">
-                          check
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-1.5 mb-0.5">
-                      <h3 className="text-slate-900 dark:text-white font-bold text-base truncate">
-                        {creator.full_name}
-                      </h3>
-                      {creator.year && (
-                        <span className="text-xs text-slate-400 dark:text-slate-500 font-medium px-1.5 py-0.5 rounded bg-slate-100 dark:bg-white/10">
-                          {creator.year}
-                        </span>
+                <div className="relative flex items-center justify-between gap-4 p-6 rounded-2xl bg-white dark:bg-surface-dark border border-gray-100 dark:border-white/10">
+                  <div className="flex items-center gap-4 flex-1">
+                    <div className="relative">
+                      <img
+                        alt={creator.full_name}
+                        className="size-16 rounded-full object-cover border-3 border-white dark:border-black"
+                        src={
+                          creator.avatar_url ||
+                          "https://via.placeholder.com/56?text=User"
+                        }
+                      />
+                      {creator.verified && (
+                        <div
+                          className="absolute -bottom-1 -right-1 bg-primary text-white rounded-full p-1"
+                          title="Verified Student"
+                        >
+                          <span className="material-symbols-outlined text-[16px] font-bold block">
+                            check
+                          </span>
+                        </div>
                       )}
                     </div>
-                    {creator.rating && (
-                      <div className="flex items-center gap-1 text-sm text-slate-500 dark:text-gray-400">
-                        <span className="material-symbols-outlined text-[16px] text-yellow-400 icon-filled">
-                          star
-                        </span>
-                        <span className="font-semibold text-slate-700 dark:text-white">
-                          {creator.rating}
-                        </span>
-                        <span>({creator.endorsements || 0} endorsements)</span>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1">
+                        {creator.year && (
+                          <span className="text-xs text-slate-400 dark:text-slate-500 font-medium px-2 py-1 rounded-full bg-slate-100 dark:bg-white/10 shrink-0">
+                            {creator.year}
+                          </span>
+                        )}
+                        <h3 className="text-slate-900 dark:text-white font-bold text-lg truncate">
+                          {creator.full_name}
+                        </h3>
                       </div>
-                    )}
+                      {creator.rating && (
+                        <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-gray-400">
+                          <span className="material-symbols-outlined text-[16px] text-yellow-400 font-bold">
+                            star
+                          </span>
+                          <span className="font-semibold text-slate-900 dark:text-white">
+                            {creator.rating}
+                          </span>
+                          <span className="text-slate-500 dark:text-gray-500">
+                            • {creator.endorsements || 0} endorsements
+                          </span>
+                        </div>
+                      )}
+                    </div>
                   </div>
-                  <span className="material-symbols-outlined text-slate-300 dark:text-slate-600">
-                    chevron_right
-                  </span>
+                  <div className="flex items-center gap-1 shrink-0">
+                    <span className="material-symbols-outlined text-slate-400 group-hover:text-primary transition-colors">
+                      arrow_forward
+                    </span>
+                  </div>
                 </div>
               </div>
             </Link>

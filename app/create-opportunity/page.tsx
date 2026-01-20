@@ -13,11 +13,32 @@ interface MediaFile {
 }
 
 const CATEGORIES = [
-  { value: "gigs", label: "Gigs & Jobs" },
-  { value: "collab", label: "Collaborations & Teams" },
-  { value: "events", label: "Campus Events" },
-  { value: "housing", label: "Housing & Roommates" },
-  { value: "marketplace", label: "Marketplace" },
+  { value: "freelance", label: "🎨 Freelance Work", icon: "work" },
+  { value: "internship", label: "💼 Internship", icon: "school" },
+  { value: "part-time", label: "⏰ Part-time Job", icon: "schedule" },
+  { value: "full-time", label: "📊 Full-time Job", icon: "business_center" },
+  { value: "hackathon", label: "🏆 Hackathon", icon: "emoji_events" },
+  { value: "workshop", label: "📚 Workshop", icon: "class" },
+  { value: "conference", label: "🎤 Conference", icon: "mic" },
+  { value: "networking", label: "🤝 Networking Event", icon: "groups" },
+  { value: "competition", label: "🏅 Competition", icon: "leaderboard" },
+  { value: "project-collab", label: "👥 Project Collaboration", icon: "hub" },
+  { value: "startup", label: "🚀 Startup", icon: "trending_up" },
+  { value: "research", label: "🔬 Research", icon: "science" },
+  { value: "mentorship", label: "👨‍🏫 Mentorship", icon: "person_coach" },
+  { value: "scholarship", label: "💰 Scholarship", icon: "card_giftcard" },
+  { value: "housing", label: "🏠 Housing", icon: "apartment" },
+  { value: "roommate", label: "🛏️ Roommate", icon: "door_back" },
+  { value: "tutoring", label: "📖 Tutoring", icon: "auto_stories" },
+  { value: "selling", label: "🛍️ Selling Item", icon: "shopping_cart" },
+  { value: "service", label: "🔧 Service", icon: "handyman" },
+  { value: "sports", label: "⚽ Sports", icon: "sports_baseball" },
+  { value: "art-culture", label: "🎭 Arts & Culture", icon: "theater_comedy" },
+  {
+    value: "community",
+    label: "💚 Community Service",
+    icon: "volunteer_activism",
+  },
 ];
 
 export default function CreateOpportunity() {
@@ -28,6 +49,8 @@ export default function CreateOpportunity() {
   const [tags, setTags] = useState<string[]>(["design", "ui/ux"]);
   const [tagInput, setTagInput] = useState("");
   const [menuOpen, setMenuOpen] = useState(false);
+  const [categorySearch, setCategorySearch] = useState("");
+  const [showCategoryDropdown, setShowCategoryDropdown] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
   const supabase = createClient();
@@ -73,7 +96,7 @@ export default function CreateOpportunity() {
   const handleInputChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
+    >,
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -201,7 +224,10 @@ export default function CreateOpportunity() {
             </button>
             {menuOpen && (
               <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-surface-dark rounded-lg shadow-xl border border-gray-200 dark:border-white/10 z-50">
-                <Link href="/profile/setup" className="block px-4 py-2 text-slate-900 dark:text-white hover:bg-gray-100 dark:hover:bg-white/10 rounded-t-lg transition-colors">
+                <Link
+                  href="/profile/setup"
+                  className="block px-4 py-2 text-slate-900 dark:text-white hover:bg-gray-100 dark:hover:bg-white/10 rounded-t-lg transition-colors"
+                >
                   Edit Profile
                 </Link>
                 <button
@@ -214,10 +240,6 @@ export default function CreateOpportunity() {
             )}
           </div>
         </div>
-      </header>
-            Cancel
-          </button>
-        </Link>
         <h1 className="text-lg font-bold leading-tight tracking-tight text-slate-900 dark:text-white">
           Create Opportunity
         </h1>
@@ -263,29 +285,68 @@ export default function CreateOpportunity() {
               Category
             </label>
             <div className="relative">
-              <select
-                className="w-full appearance-none bg-surface-light dark:bg-surface-dark border-none rounded-xl px-4 py-4 pr-10 text-base font-normal text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:ring-2 focus:ring-primary transition-all shadow-sm cursor-pointer"
-                id="category"
-                name="category"
-                value={formData.category}
-                onChange={handleInputChange}
-                required
+              <div
+                className="w-full bg-surface-light dark:bg-surface-dark border-none rounded-xl px-4 py-4 text-base font-normal text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus-ring-2 focus-ring-primary transition-all shadow-sm cursor-pointer flex items-center justify-between"
+                onClick={() => setShowCategoryDropdown(!showCategoryDropdown)}
               >
-                <option disabled value="">
-                  Select a Category
-                </option>
-                {CATEGORIES.map((cat) => (
-                  <option key={cat.value} value={cat.value}>
-                    {cat.label}
-                  </option>
-                ))}
-              </select>
-              <div className="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
-                <span className="material-symbols-outlined text-primary">
+                <input
+                  type="text"
+                  placeholder="Search or select category..."
+                  value={categorySearch}
+                  onChange={(e) => setCategorySearch(e.target.value)}
+                  className="w-full bg-transparent border-none outline-none text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500"
+                />
+                <span className="material-symbols-outlined text-primary ml-2">
                   expand_more
                 </span>
               </div>
+
+              {/* Dropdown */}
+              {showCategoryDropdown && (
+                <div className="absolute top-full left-0 right-0 mt-2 bg-surface-light dark:bg-surface-dark border border-slate-200 dark:border-white/10 rounded-xl shadow-lg z-50 max-h-64 overflow-y-auto">
+                  {CATEGORIES.filter(
+                    (cat) =>
+                      cat.label
+                        .toLowerCase()
+                        .includes(categorySearch.toLowerCase()) ||
+                      cat.value
+                        .toLowerCase()
+                        .includes(categorySearch.toLowerCase()),
+                  ).map((cat) => (
+                    <button
+                      key={cat.value}
+                      type="button"
+                      onClick={() => {
+                        setFormData((prev) => ({
+                          ...prev,
+                          category: cat.value,
+                        }));
+                        setCategorySearch(cat.label);
+                        setShowCategoryDropdown(false);
+                      }}
+                      className={`w-full text-left px-4 py-3 flex items-center gap-3 hover:bg-primary/10 dark:hover:bg-primary/10 transition-colors border-l-4 ${
+                        formData.category === cat.value
+                          ? "border-primary bg-primary/5 dark:bg-primary/5"
+                          : "border-transparent"
+                      }`}
+                    >
+                      <span className="material-symbols-outlined text-lg">
+                        {cat.icon}
+                      </span>
+                      <span className="text-slate-900 dark:text-white font-medium">
+                        {cat.label}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
+            {formData.category && (
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                Selected:{" "}
+                {CATEGORIES.find((c) => c.value === formData.category)?.label}
+              </p>
+            )}
           </div>
 
           {/* Description */}

@@ -216,50 +216,175 @@ export default function Dashboard() {
               No opportunities found. Check back soon!
             </div>
           ) : (
-            opportunities.map((opp) => (
-              <Link key={opp.id} href={`/opportunities/${opp.id}`}>
-                <article className="flex flex-col rounded-2xl bg-surface-light dark:bg-surface-dark shadow-[0_2px_8px_rgba(0,0,0,0.08)] overflow-hidden hover:shadow-lg transition-shadow cursor-pointer">
-                  {opp.media_urls && opp.media_urls.length > 0 ? (
-                    <div
-                      className="h-40 w-full bg-cover bg-center"
-                      style={{
-                        backgroundImage: `url('${opp.media_urls[0]}')`,
-                      }}
-                    ></div>
-                  ) : (
-                    <div className="h-40 w-full bg-linear-to-br from-primary/20 to-primary/5"></div>
-                  )}
-                  <div className="p-4 flex flex-col gap-3">
-                    <div>
-                      <h3 className="text-slate-900 dark:text-white text-lg font-bold leading-tight line-clamp-2">
-                        {opp.title}
-                      </h3>
-                      <p className="text-text-secondary-light dark:text-text-secondary-dark font-medium text-sm mt-1">
-                        {opp.location}
-                      </p>
-                      <p className="text-gray-600 dark:text-gray-400 text-sm mt-2 line-clamp-2">
-                        {opp.description}
-                      </p>
-                    </div>
-                    <div className="flex items-center justify-between mt-2">
-                      <div className="flex flex-wrap gap-1">
-                        {opp.tags?.slice(0, 2).map((tag) => (
-                          <span
-                            key={tag}
-                            className="text-xs font-semibold bg-blue-500/10 text-blue-500 px-2 py-0.5 rounded"
-                          >
-                            {tag}
+            opportunities.map((opp, index) => {
+              // Determine category styling
+              const categoryConfig = {
+                gigs: {
+                  bgFrom: "from-purple-500/20",
+                  bgTo: "to-purple-500/5",
+                  badge:
+                    "bg-purple-500/10 text-purple-600 dark:text-purple-400",
+                  icon: "work",
+                  borderLeft: "border-l-4 border-purple-500",
+                },
+                events: {
+                  bgFrom: "from-orange-500/20",
+                  bgTo: "to-orange-500/5",
+                  badge:
+                    "bg-orange-500/10 text-orange-600 dark:text-orange-400",
+                  icon: "celebration",
+                  borderLeft: "border-l-4 border-orange-500",
+                },
+                collab: {
+                  bgFrom: "from-emerald-500/20",
+                  bgTo: "to-emerald-500/5",
+                  badge:
+                    "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
+                  icon: "people",
+                  borderLeft: "border-l-4 border-emerald-500",
+                },
+                freelance: {
+                  bgFrom: "from-blue-500/20",
+                  bgTo: "to-blue-500/5",
+                  badge: "bg-blue-500/10 text-blue-600 dark:text-blue-400",
+                  icon: "brush",
+                  borderLeft: "border-l-4 border-blue-500",
+                },
+                workshop: {
+                  bgFrom: "from-pink-500/20",
+                  bgTo: "to-pink-500/5",
+                  badge: "bg-pink-500/10 text-pink-600 dark:text-pink-400",
+                  icon: "class",
+                  borderLeft: "border-l-4 border-pink-500",
+                },
+              };
+
+              const config =
+                categoryConfig[opp.category as keyof typeof categoryConfig] ||
+                categoryConfig.gigs;
+              const isExpired =
+                opp.deadline && new Date(opp.deadline) < new Date();
+              const daysLeft = opp.deadline
+                ? Math.ceil(
+                    (new Date(opp.deadline).getTime() - new Date().getTime()) /
+                      (1000 * 60 * 60 * 24),
+                  )
+                : null;
+
+              return (
+                <Link key={opp.id} href={`/opportunities/${opp.id}`}>
+                  <article
+                    className={`group flex flex-col rounded-2xl bg-surface-light dark:bg-surface-dark shadow-[0_2px_8px_rgba(0,0,0,0.08)] overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer border border-gray-200 dark:border-white/10 ${config.borderLeft}`}
+                  >
+                    {/* Image/Header Section */}
+                    <div className="relative overflow-hidden bg-gradient-to-br h-40 group-hover:scale-105 transition-transform duration-300">
+                      {opp.media_urls && opp.media_urls.length > 0 ? (
+                        <div
+                          className="h-full w-full bg-cover bg-center"
+                          style={{
+                            backgroundImage: `url('${opp.media_urls[0]}')`,
+                          }}
+                        ></div>
+                      ) : (
+                        <div
+                          className={`h-full w-full bg-gradient-to-br ${config.bgFrom} ${config.bgTo}`}
+                        ></div>
+                      )}
+
+                      {/* Category Badge */}
+                      <div className="absolute top-3 left-3">
+                        <span
+                          className={`text-xs font-bold ${config.badge} px-3 py-1.5 rounded-full inline-flex items-center gap-1.5 backdrop-blur-sm`}
+                        >
+                          <span className="material-symbols-outlined text-base">
+                            {config.icon}
                           </span>
-                        ))}
+                          {opp.category.charAt(0).toUpperCase() +
+                            opp.category.slice(1)}
+                        </span>
                       </div>
-                      <button className="text-primary text-sm font-bold hover:underline">
-                        View Details
-                      </button>
+
+                      {/* Status Badge */}
+                      {isExpired ? (
+                        <div className="absolute top-3 right-3 bg-red-500/20 text-red-600 dark:text-red-400 px-3 py-1 rounded-full text-xs font-bold backdrop-blur-sm">
+                          ❌ Closed
+                        </div>
+                      ) : daysLeft !== null && daysLeft <= 3 ? (
+                        <div className="absolute top-3 right-3 bg-red-500/20 text-red-600 dark:text-red-400 px-3 py-1 rounded-full text-xs font-bold backdrop-blur-sm">
+                          ⏰ {daysLeft}d left
+                        </div>
+                      ) : null}
                     </div>
-                  </div>
-                </article>
-              </Link>
-            ))
+
+                    {/* Content Section */}
+                    <div className="p-5 flex flex-col gap-4 flex-grow">
+                      <div>
+                        <h3 className="text-slate-900 dark:text-white text-lg font-bold leading-tight line-clamp-2 group-hover:text-primary transition-colors">
+                          {opp.title}
+                        </h3>
+                        {opp.location && (
+                          <p className="text-text-secondary-light dark:text-text-secondary-dark font-medium text-sm mt-2 flex items-center gap-1.5">
+                            <span className="material-symbols-outlined text-base">
+                              location_on
+                            </span>
+                            {opp.location}
+                          </p>
+                        )}
+                        <p className="text-gray-600 dark:text-gray-400 text-sm mt-3 line-clamp-2">
+                          {opp.description}
+                        </p>
+                      </div>
+
+                      {/* Tags */}
+                      {opp.tags && opp.tags.length > 0 && (
+                        <div className="flex flex-wrap gap-2">
+                          {opp.tags.slice(0, 3).map((tag) => (
+                            <span
+                              key={tag}
+                              className="text-xs font-semibold bg-blue-500/10 text-blue-600 dark:text-blue-400 px-2.5 py-1 rounded-full"
+                            >
+                              #{tag}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+
+                      {/* Footer with Deadline and CTA */}
+                      <div className="mt-auto pt-4 border-t border-gray-200 dark:border-white/10 flex items-center justify-between gap-3">
+                        <div className="flex flex-col gap-1">
+                          {opp.deadline && (
+                            <div className="flex items-center gap-1.5 text-xs text-gray-600 dark:text-gray-400">
+                              <span className="material-symbols-outlined text-base">
+                                calendar_month
+                              </span>
+                              <span>
+                                {new Date(opp.deadline).toLocaleDateString(
+                                  "en-US",
+                                  { month: "short", day: "numeric" },
+                                )}
+                              </span>
+                            </div>
+                          )}
+                          <p className="text-xs text-gray-500 dark:text-gray-500">
+                            Posted{" "}
+                            {new Date(opp.created_at).toLocaleDateString(
+                              "en-US",
+                              { month: "short", day: "numeric" },
+                            )}
+                          </p>
+                        </div>
+                        <button className="px-4 py-2 bg-primary hover:bg-blue-600 text-white text-sm font-bold rounded-lg transition-colors flex items-center gap-2 shrink-0">
+                          <span>View</span>
+                          <span className="material-symbols-outlined text-base">
+                            arrow_forward
+                          </span>
+                        </button>
+                      </div>
+                    </div>
+                  </article>
+                </Link>
+              );
+            })
           )}
         </div>
       </main>
