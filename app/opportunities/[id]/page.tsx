@@ -459,18 +459,24 @@ export default function OpportunityDetails() {
 
         {/* Bottom Action Bar */}
         <div className="fixed bottom-0 w-full max-w-2xl p-4 pt-4 pb-8 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-xl border-t border-slate-200 dark:border-white/10 z-40">
-          <button
-            onClick={handleExpressInterest}
-            disabled={isExpressing}
-            className="w-full h-14 bg-primary hover:bg-blue-600 active:scale-[0.98] transition-all rounded-xl flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(59,130,246,0.3)] disabled:opacity-50 disabled:cursor-not-allowed text-white font-extrabold text-lg tracking-wide"
-          >
-            <span>
-              {isExpressing ? "Expressing Interest..." : "Express Interest"}
-            </span>
-            <span className="material-symbols-outlined font-bold">
-              {isExpressing ? "hourglass_empty" : "send"}
-            </span>
-          </button>
+          <div className="flex items-center justify-center gap-3">
+            <button
+              onClick={handleExpressInterest}
+              disabled={isExpressing}
+              className="flex-[0.6] h-14 bg-primary hover:bg-blue-600 active:scale-[0.98] transition-all rounded-xl flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(59,130,246,0.3)] disabled:opacity-50 disabled:cursor-not-allowed text-white font-extrabold text-lg tracking-wide"
+            >
+              <span>{isExpressing ? "Expressing..." : "Express Interest"}</span>
+              <span className="material-symbols-outlined font-bold">
+                {isExpressing ? "hourglass_empty" : "send"}
+              </span>
+            </button>
+            <button className="flex-[0.2] h-14 rounded-xl border border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-white/10 text-slate-600 dark:text-gray-300 transition-colors flex items-center justify-center">
+              <span className="material-symbols-outlined">share</span>
+            </button>
+            <button className="flex-[0.2] h-14 rounded-xl border border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-white/10 text-slate-600 dark:text-gray-300 transition-colors flex items-center justify-center">
+              <span className="material-symbols-outlined">repeat</span>
+            </button>
+          </div>
         </div>
       </div>
     </div>

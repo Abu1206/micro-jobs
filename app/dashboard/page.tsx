@@ -206,7 +206,7 @@ export default function Dashboard() {
         </div>
 
         {/* Cards Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 max-w-full">
           {loading ? (
             <div className="col-span-full text-center py-8 text-gray-400">
               Loading opportunities...
@@ -277,7 +277,7 @@ export default function Dashboard() {
                     className={`group flex flex-col rounded-2xl bg-surface-light dark:bg-surface-dark shadow-[0_2px_8px_rgba(0,0,0,0.08)] overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer border border-gray-200 dark:border-white/10 ${config.borderLeft}`}
                   >
                     {/* Image/Header Section */}
-                    <div className="relative overflow-hidden bg-gradient-to-br h-40 group-hover:scale-105 transition-transform duration-300">
+                    <div className="relative overflow-hidden bg-gradient-to-br h-56 group-hover:scale-105 transition-transform duration-300">
                       {opp.media_urls && opp.media_urls.length > 0 ? (
                         <div
                           className="h-full w-full bg-cover bg-center"
@@ -317,20 +317,20 @@ export default function Dashboard() {
                     </div>
 
                     {/* Content Section */}
-                    <div className="p-5 flex flex-col gap-4 flex-grow">
+                    <div className="p-6 flex flex-col gap-5 flex-grow">
                       <div>
-                        <h3 className="text-slate-900 dark:text-white text-lg font-bold leading-tight line-clamp-2 group-hover:text-primary transition-colors">
+                        <h3 className="text-slate-900 dark:text-white text-2xl font-bold leading-tight line-clamp-2 group-hover:text-primary transition-colors">
                           {opp.title}
                         </h3>
                         {opp.location && (
-                          <p className="text-text-secondary-light dark:text-text-secondary-dark font-medium text-sm mt-2 flex items-center gap-1.5">
+                          <p className="text-text-secondary-light dark:text-text-secondary-dark font-medium text-base mt-2 flex items-center gap-1.5">
                             <span className="material-symbols-outlined text-base">
                               location_on
                             </span>
                             {opp.location}
                           </p>
                         )}
-                        <p className="text-gray-600 dark:text-gray-400 text-sm mt-3 line-clamp-2">
+                        <p className="text-gray-600 dark:text-gray-400 text-base mt-4 line-clamp-2">
                           {opp.description}
                         </p>
                       </div>
@@ -350,8 +350,8 @@ export default function Dashboard() {
                       )}
 
                       {/* Footer with Deadline and CTA */}
-                      <div className="mt-auto pt-4 border-t border-gray-200 dark:border-white/10 flex items-center justify-between gap-3">
-                        <div className="flex flex-col gap-1">
+                      <div className="mt-auto pt-4 border-t border-gray-200 dark:border-white/10 flex items-center justify-between gap-2">
+                        <div className="flex flex-col gap-1 flex-[0.6]">
                           {opp.deadline && (
                             <div className="flex items-center gap-1.5 text-xs text-gray-600 dark:text-gray-400">
                               <span className="material-symbols-outlined text-base">
@@ -373,10 +373,14 @@ export default function Dashboard() {
                             )}
                           </p>
                         </div>
-                        <button className="px-4 py-2 bg-primary hover:bg-blue-600 text-white text-sm font-bold rounded-lg transition-colors flex items-center gap-2 shrink-0">
-                          <span>View</span>
+                        <button className="flex-[0.2] h-10 rounded-lg border border-gray-300 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-white/10 text-gray-600 dark:text-gray-300 transition-colors flex items-center justify-center">
                           <span className="material-symbols-outlined text-base">
-                            arrow_forward
+                            share
+                          </span>
+                        </button>
+                        <button className="flex-[0.2] h-10 rounded-lg border border-gray-300 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-white/10 text-gray-600 dark:text-gray-300 transition-colors flex items-center justify-center">
+                          <span className="material-symbols-outlined text-base">
+                            repeat
                           </span>
                         </button>
                       </div>
