@@ -10,7 +10,7 @@
     "seed:db": "npx tsx scripts/seed-db.ts"
   },
   "dependencies": {
-    "@supabase/ssr": "^0.0.11",
+    "@supabase/ssr": "^0.4.0",
     "@supabase/supabase-js": "^2.90.1",
     "next": "16.1.1",
     "react": "19.2.3",
