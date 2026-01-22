@@ -22,19 +22,23 @@ export default function ProfileSetup() {
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
-  const supabase = createClient(); // ✅ singleton client
+  const supabase = createClient();
 
   // --- Check authentication ---
   useEffect(() => {
     const checkAuth = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+      try {
+        const response = await fetch("/api/auth/check");
+        const data = await response.json();
 
-      if (!user) {
+        if (!data.authenticated) {
+          router.push("/auth/login");
+        } else {
+          setIsAuthenticated(true);
+        }
+      } catch (error) {
         router.push("/auth/login");
-      } else {
-        setIsAuthenticated(true);
+      } finally {
         setAuthLoading(false);
       }
     };
@@ -47,7 +51,7 @@ export default function ProfileSetup() {
         URL.revokeObjectURL(previewUrl);
       }
     };
-  }, []);
+  }, [router]);
 
   if (authLoading) {
     return (

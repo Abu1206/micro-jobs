@@ -3,9 +3,10 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const supabase = await createClient();
 
     const {
@@ -23,7 +24,7 @@ export async function DELETE(
     const { data: opportunity } = await supabase
       .from("opportunities")
       .select("user_id")
-      .eq("id", params.id)
+      .eq("id", id)
       .single();
 
     if (opportunity?.user_id !== user.id) {
@@ -37,7 +38,7 @@ export async function DELETE(
     const { error } = await supabase
       .from("opportunities")
       .delete()
-      .eq("id", params.id);
+      .eq("id", id);
 
     if (error) {
       throw error;

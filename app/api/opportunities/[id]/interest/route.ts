@@ -3,11 +3,11 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const supabase = await createClient();
-    const { id } = params;
 
     // Check if user is authenticated
     const {
@@ -54,12 +54,12 @@ export async function POST(
     // Create application record
     const { data: application, error: createError } = await supabase
       .from('applications')
-      .insert({
+      .insert([{
         user_id: user.id,
         opportunity_id: id,
         status: 'pending',
         created_at: new Date().toISOString(),
-      })
+      }] as any)
       .select();
 
     if (createError) {

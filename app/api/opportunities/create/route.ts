@@ -39,7 +39,7 @@ export async function POST(req: NextRequest) {
     // Create opportunity
     const { data, error } = await supabase
       .from('opportunities')
-      .insert({
+      .insert([{
         user_id: user.id,
         title,
         category,
@@ -50,7 +50,7 @@ export async function POST(req: NextRequest) {
         media_urls: media_urls || [],
         created_at: new Date().toISOString(),
         status: 'active',
-      })
+      }] as any)
       .select();
 
     if (error) {

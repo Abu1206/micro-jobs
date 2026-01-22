@@ -196,18 +196,20 @@ export default function CreateOpportunity() {
       // Create opportunity
       const { data, error } = await supabase
         .from("opportunities")
-        .insert({
-          user_id: user.id,
-          title: formData.title,
-          category: formData.category,
-          description: formData.description,
-          location: formData.location || null,
-          deadline: formData.deadline || null,
-          tags: tags,
-          media_urls: mediaUrls,
-          created_at: new Date().toISOString(),
-          status: "active",
-        })
+        .insert([
+          {
+            user_id: user.id,
+            title: formData.title,
+            category: formData.category,
+            description: formData.description,
+            location: formData.location || null,
+            deadline: formData.deadline || null,
+            tags: tags,
+            media_urls: mediaUrls,
+            created_at: new Date().toISOString(),
+            status: "active",
+          },
+        ] as any)
         .select();
 
       if (error) throw error;

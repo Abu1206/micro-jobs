@@ -121,13 +121,13 @@ export default function OpportunityDetails() {
             throw new Error(`Opportunity with ID ${id} not found`);
           }
         } else {
-          setOpportunity(oppData);
+          setOpportunity(oppData as any);
 
           // Fetch creator profile
           const { data: profileData, error: profileError } = await supabase
             .from("user_profiles")
             .select("*")
-            .eq("user_id", oppData.user_id)
+            .eq("user_id", (oppData as any).user_id)
             .single();
 
           if (!profileError && profileData) {

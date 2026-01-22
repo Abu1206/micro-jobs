@@ -1,18 +1,9 @@
 import type { Metadata } from "next";
-import { Outfit, Inter } from "next/font/google";
 import "./globals.css";
 
-const outfit = Outfit({
-  variable: "--font-display",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
-});
-
-const inter = Inter({
-  variable: "--font-body",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-});
+// Using system fonts as fallback instead of Google Fonts to avoid build issues
+const outfitClasses = "font-display";
+const interClasses = "font-body";
 
 export const metadata: Metadata = {
   title: "Micra Jobs - Find Campus Opportunities",
@@ -34,7 +25,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${outfit.variable} ${inter.variable} antialiased bg-background-light dark:bg-background-dark text-[#111418] dark:text-white overflow-x-hidden`}
+        className={`antialiased bg-background-light dark:bg-background-dark text-[#111418] dark:text-white overflow-x-hidden`}
       >
         {children}
       </body>

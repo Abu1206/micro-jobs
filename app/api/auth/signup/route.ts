@@ -31,13 +31,13 @@ export async function POST(req: NextRequest) {
     if (data.user) {
       await supabase
         .from('user_profiles')
-        .insert({
+        .insert([{
           user_id: data.user.id,
           email: data.user.email,
           full_name: fullName,
           school_id: schoolId,
           created_at: new Date().toISOString(),
-        })
+        }] as any)
         .select();
     }
 
