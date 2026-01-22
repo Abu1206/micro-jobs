@@ -131,7 +131,14 @@ export default function OpportunityDetails() {
             .single();
 
           if (!profileError && profileData) {
-            setCreator(profileData);
+            setCreator({
+              id: profileData.user_id,
+              full_name: profileData.full_name || "",
+              rating: profileData.rating,
+              endorsements: profileData.endorsements,
+              avatar_url: profileData.avatar_url,
+              verified: profileData.verified,
+            } as PostCreator);
           }
         }
       } catch (err: any) {

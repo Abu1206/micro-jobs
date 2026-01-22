@@ -92,10 +92,14 @@ export default function Messages() {
                 isOnline: Math.random() > 0.5,
                 unread: false,
                 opportunityContext: conv.opportunity_id
-                  ? { id: conv.opportunity_id, title: "Opportunity", icon: "💼" }
+                  ? {
+                      id: conv.opportunity_id,
+                      title: "Opportunity",
+                      icon: "💼",
+                    }
                   : undefined,
               };
-            })
+            }),
           );
           setConversations(transformedConversations);
         }
