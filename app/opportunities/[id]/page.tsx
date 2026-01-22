@@ -154,12 +154,14 @@ export default function OpportunityDetails() {
     setIsExpressing(true);
 
     try {
-      const { error } = await supabase.from("applications").insert({
-        user_id: currentUser.id,
-        opportunity_id: id,
-        status: "pending",
-        created_at: new Date().toISOString(),
-      });
+      const { error } = await supabase.from("applications").insert([
+        {
+          user_id: currentUser.id,
+          opportunity_id: id,
+          status: "pending",
+          created_at: new Date().toISOString(),
+        },
+      ] as any);
 
       if (error) throw error;
 
@@ -188,11 +190,13 @@ export default function OpportunityDetails() {
           .eq("opportunity_id", id);
       } else {
         // Add to saved
-        await supabase.from("saved_opportunities").insert({
-          user_id: currentUser.id,
-          opportunity_id: id,
-          created_at: new Date().toISOString(),
-        });
+        await supabase.from("saved_opportunities").insert([
+          {
+            user_id: currentUser.id,
+            opportunity_id: id,
+            created_at: new Date().toISOString(),
+          },
+        ] as any);
       }
 
       setIsSaved(!isSaved);

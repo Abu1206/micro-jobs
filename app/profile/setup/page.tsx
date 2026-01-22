@@ -117,8 +117,7 @@ export default function ProfileSetup() {
         }
       }
 
-      // --- Upsert profile ---
-      const { error: upsertError } = await supabase
+       const { error: upsertError } = await supabase
         .from("user_profiles")
         .upsert(
           {
@@ -133,7 +132,7 @@ export default function ProfileSetup() {
             endorsements: 0,
             updated_at: new Date().toISOString(),
           },
-          { onConflict: "user_id" },
+          { onConflict: "user_id" }
         );
 
       if (upsertError) throw upsertError;
