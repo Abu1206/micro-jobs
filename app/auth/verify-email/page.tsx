@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 
+export const dynamic = "force-dynamic";
+
 export default function VerifyEmail() {
   return (
     <div className="relative flex min-h-screen w-full flex-col items-center justify-center overflow-hidden bg-background-light dark:bg-background-dark">
