@@ -59,20 +59,58 @@ export default function Messages() {
           .order("last_message_at", { ascending: false });
 
         if (convData) {
-          setConversations(convData as Conversation[]);
+          // Transform raw conversation data to match interface
+          const transformedConversations = await Promise.all(
+            convData.map(async (conv: any) => {
+              const otherParticipantId =
+                conv.participant_1_id === user.id
+                  ? conv.participant_2_id
+                  : conv.participant_1_id;
+
+              const { data: participant } = await supabase
+                .from("user_profiles")
+                .select("full_name, avatar_url")
+                .eq("user_id", otherParticipantId)
+                .single();
+
+              // Fetch last message
+              const { data: lastMsg } = await supabase
+                .from("messages")
+                .select("content, created_at")
+                .eq("conversation_id", conv.id)
+                .order("created_at", { ascending: false })
+                .limit(1)
+                .single();
+
+              return {
+                id: conv.id,
+                participantId: otherParticipantId,
+                participantName: participant?.full_name || "Unknown",
+                participantAvatar: participant?.avatar_url || undefined,
+                lastMessage: lastMsg?.content || "",
+                lastMessageTime: lastMsg?.created_at || conv.last_message_at,
+                isOnline: Math.random() > 0.5,
+                unread: false,
+                opportunityContext: conv.opportunity_id
+                  ? { id: conv.opportunity_id, title: "Opportunity", icon: "💼" }
+                  : undefined,
+              };
+            })
+          );
+          setConversations(transformedConversations);
         }
 
         // Fetch online users from user_profiles
         const { data: usersData } = await supabase
           .from("user_profiles")
-          .select("id, full_name, avatar_url")
+          .select("user_id, full_name, avatar_url")
           .neq("user_id", user.id)
           .limit(8);
 
         if (usersData) {
           setActiveUsers(
             usersData.map((u: any) => ({
-              id: u.id,
+              id: u.user_id,
               name: u.full_name,
               avatar: u.avatar_url,
               isOnline: Math.random() > 0.5,

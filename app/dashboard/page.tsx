@@ -43,20 +43,26 @@ export default function Dashboard() {
       if (user) {
         const { data, error } = await supabase
           .from("opportunities")
-          .select(
-            `
-            *,
-            user_profiles (
-              full_name,
-              avatar_url
-            )
-          `,
-          )
+          .select("*")
           .eq("status", "active")
           .order("created_at", { ascending: false });
 
         if (!error && data) {
-          setOpportunities(data as Opportunity[]);
+          // Fetch user profiles separately for each opportunity
+          const opportunitiesWithProfiles = await Promise.all(
+            data.map(async (opp: any) => {
+              const { data: profile } = await supabase
+                .from("user_profiles")
+                .select("full_name, avatar_url")
+                .eq("user_id", opp.user_id)
+                .single();
+              return {
+                ...opp,
+                user_profiles: profile,
+              };
+            }),
+          );
+          setOpportunities(opportunitiesWithProfiles as Opportunity[]);
         } else {
           console.error("Error fetching opportunities:", error);
         }
