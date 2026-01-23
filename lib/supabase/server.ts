@@ -2,18 +2,22 @@ import { cookies } from 'next/headers';
 import { createClient as createSupabaseClient } from '@supabase/supabase-js';
 import type { Database } from './database.types';
 
-export function createClient() {
-  // You can still access cookies if you need them for custom logic
-  const cookieStore = cookies();
+export async function createClient() {
+  // Get cookies to potentially manage sessions
+  const cookieStore = await cookies();
 
-  // Directly create a Supabase client (no SSR helper needed)
+  // Create Supabase client with proper environment variables
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+  if (!supabaseUrl || !supabaseAnonKey) {
+    throw new Error('Missing Supabase environment variables');
+  }
+
   const supabase = createSupabaseClient<Database>(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    supabaseUrl,
+    supabaseAnonKey
   );
-
-  // Optionally, you could read/write cookies manually here if needed
-  // e.g., cookieStore.get('access_token') or cookieStore.set('something', 'value')
 
   return supabase;
 }

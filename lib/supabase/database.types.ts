@@ -11,43 +11,67 @@ export type Database = {
     Tables: {
       user_profiles: {
         Row: {
+          id: string
           user_id: string
           full_name: string | null
           headline: string | null
           university: string | null
           major: string | null
+          year: string | null
+          bio: string | null
           avatar_url: string | null
+          banner_url: string | null
+          skills: string[]
           verified: boolean
           rating: number
           endorsements: number
-          updated_at: string
+          phone: string | null
+          location: string | null
+          website: string | null
           created_at: string
+          updated_at: string
         }
         Insert: {
+          id?: string
           user_id: string
           full_name?: string | null
           headline?: string | null
           university?: string | null
           major?: string | null
+          year?: string | null
+          bio?: string | null
           avatar_url?: string | null
+          banner_url?: string | null
+          skills?: string[]
           verified?: boolean
           rating?: number
           endorsements?: number
-          updated_at?: string
+          phone?: string | null
+          location?: string | null
+          website?: string | null
           created_at?: string
+          updated_at?: string
         }
         Update: {
+          id?: string
           user_id?: string
           full_name?: string | null
           headline?: string | null
           university?: string | null
           major?: string | null
+          year?: string | null
+          bio?: string | null
           avatar_url?: string | null
+          banner_url?: string | null
+          skills?: string[]
           verified?: boolean
           rating?: number
           endorsements?: number
-          updated_at?: string
+          phone?: string | null
+          location?: string | null
+          website?: string | null
           created_at?: string
+          updated_at?: string
         }
         Relationships: []
       }

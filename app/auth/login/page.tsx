@@ -4,6 +4,8 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
+export const dynamic = "force-dynamic";
+
 export default function Login() {
   const [formData, setFormData] = useState({
     email: "",
@@ -44,7 +46,12 @@ export default function Login() {
         throw new Error(data.error || "Login failed");
       }
 
-      router.push("/profile/setup");
+      // Store the session data if provided
+      if (data.session) {
+        localStorage.setItem("supabase_session", JSON.stringify(data.session));
+      }
+
+      router.push("/dashboard");
     } catch (err: any) {
       setError(err.message || "An error occurred during login");
     } finally {
