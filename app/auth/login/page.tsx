@@ -60,16 +60,16 @@ export default function Login() {
   };
 
   return (
-    <div className="relative flex min-h-screen w-full flex-col items-center justify-center overflow-hidden bg-background-light dark:bg-background-dark">
-      {/* Background with gradient */}
+    <div className="relative flex min-h-screen w-full flex-col items-center justify-center overflow-hidden bg-gradient-to-b from-gray-900 via-gray-800 to-black">
+      {/* Background with gradient fallback */}
       <div className="absolute inset-0 w-full h-[50vh] lg:h-[60vh] z-0">
         <div
-          className="w-full h-full bg-cover bg-center bg-no-repeat opacity-40 grayscale"
+          className="w-full h-full bg-cover bg-center bg-no-repeat opacity-20"
           style={{
-            backgroundImage: `url('https://lh3.googleusercontent.com/aida-public/AB6AXuBD3AjQI0Lg8lY9Imjibt-A4ScoA3AmxuUK5EEqYXGlOJJYLogG1RG85_08aQXMJLOnbfy3Q4AUqHapnDr__URM7KkQ2mrAlTcZD3nZ3zMa47FJL_yu-Rak62lzED1iw20iEnFpIJO7VdNgM6R993SSB__6tUu02d3mUKdQIHFZYz1p8BgIeVTDGR33Sh5fCwHjBFZRgdcqsBWOzFIb4Xz6FOd0A3LM20--s_HlXDUEDY1a1EgiruHrllAv-8ranaLKbwC5NmRxImyw')`,
+            backgroundImage: `linear-gradient(135deg, rgba(37, 99, 235, 0.1) 0%, rgba(59, 130, 246, 0.05) 100%)`,
           }}
         />
-        <div className="absolute inset-0 bg-linear-to-b from-background-dark/40 via-background-dark/80 to-background-dark"></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-gray-900/40 via-gray-900/70 to-black"></div>
       </div>
 
       {/* Header */}

@@ -6,6 +6,35 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const { email, password, fullName, schoolId } = body;
 
+    // Validate inputs
+    if (!email || !password || !fullName) {
+      return NextResponse.json(
+        { error: 'Email, password, and full name are required' },
+        { status: 400 }
+      );
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return NextResponse.json(
+        { error: 'Please provide a valid email address' },
+        { status: 400 }
+      );
+    }
+
+    if (password.length < 8) {
+      return NextResponse.json(
+        { error: 'Password must be at least 8 characters' },
+        { status: 400 }
+      );
+    }
+
+    if (fullName.length < 2 || fullName.length > 100) {
+      return NextResponse.json(
+        { error: 'Full name must be between 2 and 100 characters' },
+        { status: 400 }
+      );
+    }
+
     const supabase = await createClient();
 
     // Sign up user
@@ -21,6 +50,7 @@ export async function POST(req: NextRequest) {
     });
 
     if (error) {
+      console.error('[SIGNUP_ERROR]:', error);
       return NextResponse.json(
         { error: error.message },
         { status: 400 }
@@ -49,8 +79,9 @@ export async function POST(req: NextRequest) {
       { status: 201 }
     );
   } catch (error: any) {
+    console.error('[SIGNUP_SERVER_ERROR]:', error);
     return NextResponse.json(
-      { error: error.message || 'Internal server error' },
+      { error: process.env.NODE_ENV === 'development' ? error.message : 'Sign up failed' },
       { status: 500 }
     );
   }

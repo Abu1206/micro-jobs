@@ -61,7 +61,14 @@ export async function POST(req: NextRequest) {
 
     if (!participantId || !message) {
       return NextResponse.json(
-        { error: "Missing required fields" },
+        { error: "Missing required fields: participantId and message are required" },
+        { status: 400 }
+      );
+    }
+
+    if (message.length < 1 || message.length > 5000) {
+      return NextResponse.json(
+        { error: "Message must be between 1 and 5000 characters" },
         { status: 400 }
       );
     }
@@ -89,8 +96,9 @@ export async function POST(req: NextRequest) {
       { status: 201 }
     );
   } catch (error: any) {
+    console.error('[CONVERSATIONS_POST_ERROR]:', error);
     return NextResponse.json(
-      { error: error.message || "Internal server error" },
+      { error: process.env.NODE_ENV === 'development' ? error.message : 'Failed to create conversation' },
       { status: 500 }
     );
   }

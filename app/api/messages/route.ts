@@ -42,14 +42,12 @@ export async function GET(req: NextRequest) {
       { status: 200 }
     );
   } catch (error: any) {
+    console.error('[MESSAGES_GET_ERROR]:', error);
     return NextResponse.json(
-      { error: error.message || "Internal server error" },
+      { error: process.env.NODE_ENV === 'development' ? error.message : 'Failed to fetch messages' },
       { status: 500 }
     );
   }
-}
-
-export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const supabase = await createClient();
@@ -95,8 +93,9 @@ export async function POST(req: NextRequest) {
       { status: 201 }
     );
   } catch (error: any) {
+    console.error('[MESSAGES_POST_ERROR]:', error);
     return NextResponse.json(
-      { error: error.message || "Internal server error" },
+      { error: process.env.NODE_ENV === 'development' ? error.message : 'Failed to send message' },
       { status: 500 }
     );
   }

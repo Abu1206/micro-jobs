@@ -34,41 +34,45 @@ export default function Dashboard() {
 
   useEffect(() => {
     const getUser = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      setUser(user);
+      try {
+        // Get current user and refresh session
+        const {
+          data: { user },
+          error: userError,
+        } = await supabase.auth.getUser();
 
-      // Fetch opportunities from database with creator profile info
-      if (user) {
-        const { data, error } = await supabase
-          .from("opportunities")
-          .select("*")
-          .eq("status", "active")
-          .order("created_at", { ascending: false });
-
-        if (!error && data) {
-          // Fetch user profiles separately for each opportunity
-          const opportunitiesWithProfiles = await Promise.all(
-            data.map(async (opp: any) => {
-              const { data: profile } = await supabase
-                .from("user_profiles")
-                .select("full_name, avatar_url")
-                .eq("user_id", opp.user_id)
-                .single();
-              return {
-                ...opp,
-                user_profiles: profile,
-              };
-            }),
-          );
-          setOpportunities(opportunitiesWithProfiles as Opportunity[]);
-        } else {
-          console.error("Error fetching opportunities:", error);
+        if (userError || !user) {
+          router.push("/auth/login");
+          return;
         }
-      }
 
-      setLoading(false);
+        setUser(user);
+
+        // Fetch opportunities from database with creator profile info using JOIN
+        if (user) {
+          const { data, error } = await supabase
+            .from("opportunities")
+            .select(
+              `
+              *,
+              user_profiles(full_name, avatar_url)
+            `,
+            )
+            .eq("status", "active")
+            .order("created_at", { ascending: false });
+
+          if (!error && data) {
+            setOpportunities(data as Opportunity[]);
+          } else {
+            console.error("Error fetching opportunities:", error);
+          }
+        }
+
+        setLoading(false);
+      } catch (err: any) {
+        console.error("[DASHBOARD_ERROR]:", err);
+        setLoading(false);
+      }
     };
 
     getUser();

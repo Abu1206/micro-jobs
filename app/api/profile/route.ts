@@ -45,8 +45,9 @@ export async function GET(req: NextRequest) {
       { status: 200 }
     );
   } catch (error: any) {
+    console.error('[PROFILE_GET_ERROR]:', error);
     return NextResponse.json(
-      { error: error.message || 'Internal server error' },
+      { error: process.env.NODE_ENV === 'development' ? error.message : 'Failed to fetch profile' },
       { status: 500 }
     );
   }
@@ -123,8 +124,9 @@ export async function POST(req: NextRequest) {
       { status: 200 }
     );
   } catch (error: any) {
+    console.error('[PROFILE_POST_ERROR]:', error);
     return NextResponse.json(
-      { error: error.message || 'Internal server error' },
+      { error: process.env.NODE_ENV === 'development' ? error.message : 'Failed to update profile' },
       { status: 500 }
     );
   }
