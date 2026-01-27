@@ -35,18 +35,16 @@ export default function Dashboard() {
   useEffect(() => {
     const getUser = async () => {
       try {
-        // Get current user and refresh session
-        const {
-          data: { user },
-          error: userError,
-        } = await supabase.auth.getUser();
+        // Get current user via API
+        const res = await fetch("/api/auth/check");
+        const data = await res.json();
 
-        if (userError || !user) {
+        if (!data.authenticated) {
           router.push("/auth/login");
           return;
         }
 
-        setUser(user);
+        setUser(data.user);
 
         // Fetch opportunities from database with creator profile info using JOIN
         if (user) {

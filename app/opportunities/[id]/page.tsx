@@ -95,9 +95,9 @@ export default function OpportunityDetails() {
   useEffect(() => {
     const fetchOpportunityAndCreator = async () => {
       try {
-        const {
-          data: { user },
-        } = await supabase.auth.getUser();
+        const res = await fetch("/api/auth/check");
+        const data = await res.json();
+        const user = data.authenticated ? data.user : null;
         setCurrentUser(user);
 
         // Try to fetch from database

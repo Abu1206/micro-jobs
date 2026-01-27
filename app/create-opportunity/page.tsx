@@ -70,15 +70,19 @@ export default function CreateOpportunity() {
 
   useEffect(() => {
     const checkAuth = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+      try {
+        const res = await fetch("/api/auth/check");
+        const data = await res.json();
 
-      if (!user) {
+        if (!data.authenticated) {
+          router.push("/auth/login");
+        } else {
+          setUser(data.user);
+          setLoading(false);
+        }
+      } catch (err) {
+        console.error("Auth check failed:", err);
         router.push("/auth/login");
-      } else {
-        setUser(user);
-        setLoading(false);
       }
     };
 

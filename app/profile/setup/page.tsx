@@ -85,16 +85,15 @@ export default function ProfileSetup() {
     setLoading(true);
 
     try {
-      const {
-        data: { user },
-        error: userError,
-      } = await supabase.auth.getUser();
+      const res = await fetch("/api/auth/check");
+      const data = await res.json();
 
-      if (userError) throw userError;
-      if (!user) {
+      if (!data.authenticated) {
         router.push("/auth/login");
         return;
       }
+
+      const user = data.user;
 
       // --- Upload profile photo to Supabase Storage ---
       let avatarUrl: string | null = null;

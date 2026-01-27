@@ -18,10 +18,15 @@ export default function Header({ showNav = true, userName }: HeaderProps) {
 
   useEffect(() => {
     const getUser = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      setUser(user);
+      try {
+        const res = await fetch("/api/auth/check");
+        const data = await res.json();
+        if (data.authenticated) {
+          setUser(data.user);
+        }
+      } catch (err) {
+        console.error("Failed to fetch user:", err);
+      }
     };
     getUser();
   }, []);

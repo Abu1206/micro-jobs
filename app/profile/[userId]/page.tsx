@@ -41,9 +41,9 @@ export default function PublicProfile() {
         setError(null);
 
         // Get current logged-in user
-        const {
-          data: { user },
-        } = await supabase.auth.getUser();
+        const res = await fetch("/api/auth/check");
+        const data = await res.json();
+        const user = data.authenticated ? data.user : null;
         setCurrentUser(user);
 
         // Handle "current" as a special case for viewing own profile

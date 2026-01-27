@@ -20,21 +20,28 @@ export default function VerifyEmail() {
   // Check if user is authenticated (already verified)
   useEffect(() => {
     const checkAuth = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (!user) {
+      try {
+        const res = await fetch("/api/auth/check");
+        const data = await res.json();
+
+        if (!data.authenticated) {
+          router.push("/auth/signup");
+          return;
+        }
+
+        if (data.user?.email_confirmed_at) {
+          router.push("/dashboard");
+          return;
+        }
+
+        setUserEmail(data.user?.email || "");
+      } catch (err) {
+        console.error("Auth check failed:", err);
         router.push("/auth/signup");
-        return;
       }
-      if (user?.email_confirmed_at) {
-        router.push("/dashboard");
-        return;
-      }
-      setUserEmail(user.email || "");
     };
     checkAuth();
-  }, [router, supabase]);
+  }, [router]);
 
   // Resend verification email
   const handleResendEmail = async () => {
@@ -45,18 +52,15 @@ export default function VerifyEmail() {
     setMessage("");
 
     try {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (!user) {
+      if (!userEmail) {
         setError("Please sign up first");
         return;
       }
 
-      // Resend confirmation email using correct method
+      // Resend confirmation email using Supabase SDK
       const { error } = await supabase.auth.resendEnumConfirmation({
         type: "signup",
-        email: user.email!,
+        email: userEmail,
       });
 
       if (error) throw error;
