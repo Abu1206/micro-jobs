@@ -60,7 +60,7 @@ export default function SignUp() {
   };
 
   return (
-    <div className="relative flex min-h-screen w-full flex-col items-center justify-center overflow-hidden bg-gradient-to-b from-gray-900 via-gray-800 to-black">
+    <div className="relative flex min-h-screen w-full flex-col items-center justify-center overflow-hidden bg-linear-to-b from-gray-900 via-gray-800 to-black">
       {/* Background with gradient fallback */}
       <div className="absolute inset-0 w-full h-[50vh] lg:h-[60vh] z-0">
         <div
@@ -69,7 +69,7 @@ export default function SignUp() {
             backgroundImage: `linear-gradient(135deg, rgba(37, 99, 235, 0.1) 0%, rgba(59, 130, 246, 0.05) 100%)`,
           }}
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-gray-900/40 via-gray-900/70 to-black"></div>
+        <div className="absolute inset-0 bg-linear-to-b from-gray-900/40 via-gray-900/70 to-black"></div>
       </div>
 
       {/* Header */}

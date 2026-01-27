@@ -96,28 +96,40 @@ export default function ProfileSetup() {
         return;
       }
 
-      // --- Convert profile photo to base64 ---
+      // --- Upload profile photo to Supabase Storage ---
       let avatarUrl: string | null = null;
       if (formData.profilePhoto) {
         try {
-          const reader = new FileReader();
-          avatarUrl = await new Promise((resolve, reject) => {
-            reader.onload = () => {
-              resolve(reader.result as string);
-            };
-            reader.onerror = () => reject(new Error("Failed to read file"));
-            reader.readAsDataURL(formData.profilePhoto as Blob);
-          });
-          console.log("Profile photo converted to base64");
+          const fileExt = formData.profilePhoto.name.split(".").pop();
+          const fileName = `${user.id}-${Date.now()}.${fileExt}`;
+          const filePath = `avatars/${fileName}`;
+
+          // Upload file to storage
+          const { error: uploadError } = await supabase.storage
+            .from("avatars")
+            .upload(filePath, formData.profilePhoto, {
+              upsert: true,
+              contentType: formData.profilePhoto.type,
+            });
+
+          if (uploadError) throw uploadError;
+
+          // Get public URL
+          const { data } = supabase.storage
+            .from("avatars")
+            .getPublicUrl(filePath);
+
+          avatarUrl = data.publicUrl;
+          console.log("Profile photo uploaded successfully:", avatarUrl);
         } catch (photoError: any) {
-          console.error("Photo conversion failed:", photoError);
-          alert(`Failed to convert photo: ${photoError.message}`);
+          console.error("Photo upload failed:", photoError);
+          alert(`Failed to upload photo: ${photoError.message}`);
           setLoading(false);
           return;
         }
       }
 
-       const { error: upsertError } = await supabase
+      const { error: upsertError } = await supabase
         .from("user_profiles")
         .upsert(
           {
@@ -132,7 +144,7 @@ export default function ProfileSetup() {
             endorsements: 0,
             updated_at: new Date().toISOString(),
           },
-          { onConflict: "user_id" }
+          { onConflict: "user_id" },
         );
 
       if (upsertError) throw upsertError;

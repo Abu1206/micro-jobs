@@ -7,7 +7,7 @@ export default function Home() {
   const [hoveredButton, setHoveredButton] = useState<string | null>(null);
 
   return (
-    <div className="relative flex min-h-screen w-full flex-col items-center justify-between overflow-hidden bg-gradient-to-b from-gray-900 via-gray-800 to-black">
+    <div className="relative flex min-h-screen w-full flex-col items-center justify-between overflow-hidden bg-linear-to-b from-gray-900 via-gray-800 to-black">
       {/* Background Gradient with fallback pattern */}
       <div className="absolute inset-0 w-full h-[60vh] z-0">
         <div
@@ -16,7 +16,7 @@ export default function Home() {
             backgroundImage: `linear-gradient(135deg, rgba(37, 99, 235, 0.1) 0%, rgba(59, 130, 246, 0.05) 100%)`,
           }}
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-gray-900/30 via-gray-900/70 to-black"></div>
+        <div className="absolute inset-0 bg-linear-to-b from-gray-900/30 via-gray-900/70 to-black"></div>
       </div>
 
       {/* Header with Logo */}
