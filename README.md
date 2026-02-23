@@ -1,36 +1,85 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Micro-Jobs Platform
 
-## Getting Started
+A modern web application for posting and finding micro-jobs or small freelance tasks. This platform is built with a powerful and scalable tech stack, perfect for a dynamic, real-time user experience.
 
-First, run the development server:
+## ✨ Key Features
+
+*   **User Authentication**: Secure user sign-up and login (likely provided by Supabase).
+*   **Job Postings**: Create, view, and manage job listings.
+*   **Job Filtering & Searching**: Easily find relevant tasks.
+*   **Real-time Updates**: Instant notifications and updates using Supabase's real-time capabilities.
+
+## 🛠️ Tech Stack
+
+*   **Framework**: [Next.js](https://nextjs.org/) (React)
+*   **Backend & Database**: [Supabase](https://supabase.io/)
+*   **Styling**: [Tailwind CSS](https://tailwindcss.com/)
+*   **Language**: [TypeScript](https://www.typescriptlang.org/)
+
+## 🚀 Getting Started
+
+Follow these steps to get the project up and running on your local machine.
+
+### Prerequisites
+
+*   [Node.js](https://nodejs.org/en/) (v20 or later recommended)
+*   [npm](https://www.npmjs.com/) or [yarn](https://yarnpkg.com/)
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/Abu1206/micro-jobs.git
+cd micro-jobs
+```
+
+### 2. Install Dependencies
+
+```bash
+npm install
+# or
+yarn install
+```
+
+### 3. Set up Environment Variables
+
+This project requires a connection to a Supabase project. Create a `.env.local` file in the root of the project and add your Supabase project URL and anon key:
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=YOUR_SUPABASE_URL
+NEXT_PUBLIC_SUPABASE_ANON_KEY=YOUR_SUPABASE_ANON_KEY
+```
+
+You can find these in your Supabase project settings.
+
+### 4. Run the Development Server
+
+Once the environment variables are set, you can start the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The application should now be running at [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🌱 Database Seeding
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+To populate your database with some initial data, you can use the seed script. This is useful for development and testing.
 
-## Learn More
+*Make sure your Supabase database is running and accessible before running this script.*
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+npm run seed:db
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+This command will execute the `scripts/seed-db.ts` file, which will populate your database with initial data.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🚢 Deployment
 
-## Deploy on Vercel
+The easiest way to deploy this Next.js application is to use the [Vercel Platform](https://vercel.com/new), from the creators of Next.js.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 🤝 Contributing
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Contributions, issues, and feature requests are welcome! Feel free to check the [issues page](https://github.com/Abu1206/micro-jobs/issues).
+
+---
+*This README was generated with the help of an AI assistant.*
